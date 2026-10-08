@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permisos para el servicio de voz y notificaciones -->
+    <!-- Permisos para el servicio de voz y notificaciones con pantalla apagada -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <queries>
         <!-- Permite consultar el motor de Text-To-Speech del sistema -->
@@ -34,6 +35,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Servicio Permanente en Primer Plano para mantener punk activo 24/7 con pantalla apagada -->
+        <service
+            android:name=".service.PunkKeepAliveService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Monitor de notificaciones y altavoz de cobros en tiempo real para comercios" />
+        </service>
 
         <!-- Servicio Escuchador de Notificaciones (NotificationListenerService) -->
         <service

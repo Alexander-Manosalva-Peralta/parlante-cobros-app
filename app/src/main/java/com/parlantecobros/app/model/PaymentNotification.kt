@@ -44,7 +44,9 @@ data class PaymentItem(
     val amount: Double,
     val currency: String = "S/",
     val rawText: String,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val notificationKey: String = "",
+    val postTime: Long = 0L
 ) {
     val formattedTime: String
         get() {

@@ -40,7 +40,9 @@ enum class BottomTab(val label: String) {
 @Composable
 fun HomeScreen(
     isNotificationPermissionGranted: Boolean,
+    isBatteryOptimizationIgnored: Boolean = true,
     onRequestPermission: () -> Unit,
+    onRequestIgnoreBatteryOptimization: () -> Unit = {},
     onOpenAppSettings: () -> Unit,
     onRebindService: () -> Unit,
     onTestVoice: (String) -> Unit
@@ -73,7 +75,9 @@ fun HomeScreen(
                     payments = payments,
                     settings = settings,
                     isNotificationPermissionGranted = isNotificationPermissionGranted,
+                    isBatteryOptimizationIgnored = isBatteryOptimizationIgnored,
                     onRequestPermission = onRequestPermission,
+                    onRequestIgnoreBatteryOptimization = onRequestIgnoreBatteryOptimization,
                     onTestVoice = onTestVoice
                 )
             }
@@ -178,7 +182,9 @@ fun CashierContent(
     payments: List<PaymentItem>,
     settings: com.parlantecobros.app.model.AppSettings,
     isNotificationPermissionGranted: Boolean,
+    isBatteryOptimizationIgnored: Boolean = true,
     onRequestPermission: () -> Unit,
+    onRequestIgnoreBatteryOptimization: () -> Unit = {},
     onTestVoice: (String) -> Unit
 ) {
     val totalToday = payments.sumOf { it.amount }
@@ -308,6 +314,53 @@ fun CashierContent(
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                         ) {
                             Text("Activar", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold))
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2.1. Banner de Optimización de Batería (Para funcionamiento con pantalla apagada)
+        if (!isBatteryOptimizationIgnored) {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, Color(0xFFBAE6FD), RoundedCornerShape(22.dp)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F9FF)),
+                    shape = RoundedCornerShape(22.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(18.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.PowerSettingsNew,
+                            contentDescription = null,
+                            tint = Color(0xFF0284C7),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Pantalla Apagada",
+                                style = MaterialTheme.typography.titleSmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextMain
+                                )
+                            )
+                            Text(
+                                text = "Permite funcionamiento sin restricciones para escuchar cobros con el celular bloqueado.",
+                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                            )
+                        }
+                        Button(
+                            onClick = onRequestIgnoreBatteryOptimization,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0284C7)),
+                            shape = RoundedCornerShape(14.dp),
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                        ) {
+                            Text("Permitir", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold))
                         }
                     }
                 }

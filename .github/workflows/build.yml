@@ -42,15 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.6
-        name: "punk v1.0.6 (Logo Oficial, Voz Natural y Cero Emojis)"
+        tag_name: v1.0.7
+        name: "punk v1.0.7 (Pantalla Apagada 24/7 y Concurrencia Rápida Bancaria)"
         body: |
-          ### punk v1.0.6 - Logo Oficial, Voz Natural y Cero Emojis
+          ### punk v1.0.7 - Funcionamiento con Pantalla Apagada & Alta Concurrencia
           
-          - **Logo Oficial:** Integrado el logotipo oficial "punk" tanto en el icono de la aplicación como en la cabecera.
-          - **Voz Humana y Natural:** Algoritmo de selección de voces neuronales / WaveNet de Google con cadencia humana, pronunciación nativa de soles y pausas naturales.
-          - **Diseño Sobrio y Profesional:** Eliminación total de emojis en toda la interfaz para un acabado de nivel corporativo.
-          - **Módulo BI:** Métricas en tiempo real, ticket promedio, horas pico y desglose por billetera.
+          - **Pantalla Apagada 24/7:** Servicio permanente en primer plano (`PunkKeepAliveService`) y audio enrutado por canal de alarma (`USAGE_ALARM` + WakeLock). Funciona con el celular bloqueado y fuera de la app.
+          - **Algoritmo de Concurrencia Bancaria:** Maneja depósitos seguidos en ráfaga (ej. 3 Yapes en segundos). Cada cobro es registrado individualmente sin perder transacciones.
+          - **Cola de Voz Secuencial (`QUEUE_ADD`):** Si llegan varios cobros seguidos, el altavoz los anuncia uno tras otro en orden sin cortarse.
+          - **Auto-Reconexión:** Si el sistema operativo intenta desvincular el servicio en segundo plano, se reconecta automáticamente al instante.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

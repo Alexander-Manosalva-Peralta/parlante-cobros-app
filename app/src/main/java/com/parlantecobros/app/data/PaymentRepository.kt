@@ -39,20 +39,27 @@ object PaymentRepository {
         _lastCapturedNotification.value = info
     }
 
-    // Cache para evitar notificaciones duplicadas (dentro de 10 segundos)
+    // Algoritmo bancario de deduplicación de alta concurrencia
+    // Permite pagos sucesivos rápidos (ej. 3 Yapes en segundos) y solo filtra retransmisiones del SO
     private val recentDeduplicationCache = mutableMapOf<String, Long>()
 
     fun addPayment(payment: PaymentItem): Boolean {
-        val deduplicationKey = "${payment.appSource}_${payment.amount}_${payment.senderName}"
+        val deduplicationKey = if (payment.notificationKey.isNotEmpty() && payment.postTime > 0) {
+            "${payment.notificationKey}_${payment.postTime}"
+        } else {
+            "${payment.appSource}_${payment.amount}_${payment.senderName}_${payment.rawText.hashCode()}"
+        }
+
         val now = System.currentTimeMillis()
         val lastSeen = recentDeduplicationCache[deduplicationKey] ?: 0L
 
-        if (now - lastSeen < 10_000) {
+        // Ventana estricta de solo 1500ms para actualizaciones idénticas del sistema
+        if (lastSeen > 0 && (now - lastSeen < 1500)) {
             return false
         }
 
         recentDeduplicationCache[deduplicationKey] = now
-        recentDeduplicationCache.entries.removeIf { now - it.value > 60_000 }
+        recentDeduplicationCache.entries.removeIf { now - it.value > 30_000 }
 
         _payments.update { current ->
             listOf(payment) + current.take(99)

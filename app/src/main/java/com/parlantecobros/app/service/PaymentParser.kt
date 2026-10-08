@@ -31,7 +31,15 @@ object PaymentParser {
         Pattern.compile("""(?:¡?Te yapearon!?)\s+([A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,35}?)\s+te\s+envi[oó]""", Pattern.CASE_INSENSITIVE)
     )
 
-    fun parse(packageName: String, title: String, text: String, subText: String = "", ticker: String = ""): PaymentItem? {
+    fun parse(
+        packageName: String,
+        title: String,
+        text: String,
+        subText: String = "",
+        ticker: String = "",
+        notificationKey: String = "",
+        postTime: Long = 0L
+    ): PaymentItem? {
         val fullContent = "$title. $text. $subText. $ticker".trim()
 
         // 1. Detectar si el texto o paquete pertenece a cobros/pagos
@@ -53,7 +61,9 @@ object PaymentParser {
             senderName = sender,
             amount = amount,
             currency = "S/",
-            rawText = fullContent
+            rawText = fullContent,
+            notificationKey = notificationKey,
+            postTime = postTime
         )
     }
 
