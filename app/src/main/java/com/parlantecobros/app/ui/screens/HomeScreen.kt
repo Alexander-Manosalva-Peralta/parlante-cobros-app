@@ -256,7 +256,7 @@ fun HomeScreen(
                             )
                         )
                         TextButton(onClick = onRebindService) {
-                            Text("Reconectar", color = AppleBlue, fontWeight = FontWeight.SemiBold)
+                            Text("Reconectar y Probar", color = AppleBlue, fontWeight = FontWeight.Bold)
                         }
                     }
 

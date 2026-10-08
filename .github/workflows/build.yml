@@ -42,14 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.1
-        name: "Parlante Cobros v1.0.1 (Soporte Céntimos y Xiaomi)"
+        tag_name: v1.0.2
+        name: "Parlante Cobros v1.0.2 (Solución Crítica Android 14 y Volumen)"
         body: |
-          ### Versión 1.0.1 - Mejoras y Detección de Céntimos 🚀
+          ### Versión 1.0.2 - Solución Crítica de Enlace y Volumen 🚀
           
-          - Soporte para montos pequeños (10 céntimos, S/ 0.10).
-          - Monitor de Notificaciones en tiempo real en la pantalla.
-          - Soporte mejorado para segundo plano en Xiaomi / MIUI / HyperOS.
+          - Solucionado error en segundo plano de Android 14 que desvinculaba el servicio.
+          - Volumen automático: el altavoz se amplifica automáticamente para que la voz se escuche clara.
+          - Registro de diagnóstico en tiempo real en la pantalla.
+          - Botón "Reconectar y Probar" con sonido de prueba inmediato.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

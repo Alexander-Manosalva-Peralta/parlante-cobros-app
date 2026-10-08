@@ -1,15 +1,14 @@
 package com.parlantecobros.app.service
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import com.parlantecobros.app.data.PaymentRepository
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CobrosNotificationListener : NotificationListenerService() {
 
@@ -17,20 +16,34 @@ class CobrosNotificationListener : NotificationListenerService() {
 
     override fun onCreate() {
         super.onCreate()
-        speechManager = SpeechManager(applicationContext)
-        startForegroundNotification()
-        PaymentRepository.recordRawNotification("Servicio iniciado en segundo plano.")
-        Log.d(TAG, "CobrosNotificationListener iniciado y listo.")
+        try {
+            speechManager = SpeechManager(applicationContext)
+            val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+            PaymentRepository.recordRawNotification("[$time] Servicio iniciado y activo.")
+            Log.d(TAG, "CobrosNotificationListener onCreate exitoso.")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error en onCreate", e)
+        }
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        PaymentRepository.recordRawNotification("Conectado al sistema de notificaciones de Android.")
-        Log.d(TAG, "onListenerConnected: Conectado a Android")
+        val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+        PaymentRepository.recordRawNotification("[$time] Conectado exitosamente al sistema de Android.")
+        Log.d(TAG, "onListenerConnected: Android ha vinculado el servicio de notificaciones.")
+    }
+
+    override fun onListenerDisconnected() {
+        super.onListenerDisconnected()
+        val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+        PaymentRepository.recordRawNotification("[$time] Servicio desconectado temporalmente por Android.")
+        Log.w(TAG, "onListenerDisconnected: Android ha desvinculado el servicio.")
     }
 
     override fun onDestroy() {
-        speechManager.shutdown()
+        try {
+            speechManager.shutdown()
+        } catch (_: Exception) {}
         super.onDestroy()
     }
 
@@ -38,77 +51,52 @@ class CobrosNotificationListener : NotificationListenerService() {
         super.onNotificationPosted(sbn)
         if (sbn == null) return
 
-        val packageName = sbn.packageName ?: ""
-        // Ignorar nuestras propias notificaciones del sistema
-        if (packageName == applicationContext.packageName) return
+        try {
+            val packageName = sbn.packageName ?: ""
+            // Ignorar notificaciones de nuestra propia app
+            if (packageName == applicationContext.packageName) return
 
-        val notification = sbn.notification ?: return
-        val extras = notification.extras ?: return
+            val notification = sbn.notification ?: return
+            val extras = notification.extras ?: return
 
-        val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
-        val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: ""
-        val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString() ?: ""
-        val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString() ?: ""
-        val ticker = notification.tickerText?.toString() ?: ""
+            val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
+            val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: ""
+            val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString() ?: ""
+            val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString() ?: ""
+            val ticker = notification.tickerText?.toString() ?: ""
 
-        val combinedContent = if (bigText.isNotEmpty()) bigText else text
+            val combinedContent = if (bigText.isNotEmpty()) bigText else text
 
-        // Registrar para depuración en tiempo real en la pantalla
-        val rawPreview = "[$packageName] $title: $combinedContent"
-        PaymentRepository.recordRawNotification(rawPreview)
-        Log.d(TAG, "Notificación detectada: $rawPreview")
+            val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
+            val rawPreview = "[$time] $packageName\n$title: $combinedContent"
+            PaymentRepository.recordRawNotification(rawPreview)
+            Log.d(TAG, "Notificación detectada: $rawPreview")
 
-        // Intentar parsear el cobro
-        val payment = PaymentParser.parse(
-            packageName = packageName,
-            title = title,
-            text = combinedContent,
-            subText = subText,
-            ticker = ticker
-        ) ?: return
+            // Intentar parsear el cobro (Yape, Plin, bancos)
+            val payment = PaymentParser.parse(
+                packageName = packageName,
+                title = title,
+                text = combinedContent,
+                subText = subText,
+                ticker = ticker
+            )
 
-        val settings = PaymentRepository.settings.value
+            if (payment != null) {
+                val settings = PaymentRepository.settings.value
+                val isAppActive = settings.activeApps[payment.appSource] ?: true
 
-        // Verificar si la app específica está activada en ajustes
-        val isAppActive = settings.activeApps[payment.appSource] ?: true
-        if (!isAppActive) {
-            Log.d(TAG, "Ignorando pago de ${payment.appSource.displayName} por estar desactivada.")
-            return
-        }
-
-        // Registrar pago y anunciar
-        val isNew = PaymentRepository.addPayment(payment)
-        if (isNew) {
-            Log.d(TAG, "¡Cobro detectado con éxito! ${payment.appSource.displayName} - S/ ${payment.amount}")
-            speechManager.speakPayment(payment, settings)
-        }
-    }
-
-    private fun startForegroundNotification() {
-        val channelId = "parlante_cobros_listener_channel"
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Servicio de Parlante Cobros",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Mantiene activo el escuchador de cobros en segundo plano"
-                setShowBadge(false)
+                if (isAppActive) {
+                    val isNew = PaymentRepository.addPayment(payment)
+                    if (isNew) {
+                        Log.d(TAG, "¡Cobro detectado! Anunciando: ${payment.appSource.displayName} S/ ${payment.amount}")
+                        PaymentRepository.recordRawNotification("[$time] ¡COBRO DETECTADO! ${payment.appSource.displayName} - S/ ${payment.amount}")
+                        speechManager.speakPayment(payment, settings)
+                    }
+                }
             }
-            notificationManager.createNotificationChannel(channel)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error procesando notificación", e)
         }
-
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Parlante Cobros Activo")
-            .setContentText("Escuchando cobros de Yape, Plin y bancos...")
-            .setSmallIcon(android.R.drawable.ic_lock_silent_mode_off)
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
-
-        startForeground(1001, notification)
     }
 
     companion object {

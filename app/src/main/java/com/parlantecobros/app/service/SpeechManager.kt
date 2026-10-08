@@ -6,7 +6,6 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.PowerManager
 import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import com.parlantecobros.app.model.AppSettings
 import com.parlantecobros.app.model.PaymentItem
@@ -20,25 +19,27 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
     private val pendingMessages = mutableListOf<String>()
 
     init {
-        tts = TextToSpeech(context.applicationContext, this)
+        try {
+            tts = TextToSpeech(context.applicationContext, this)
+        } catch (e: Exception) {
+            Log.e("SpeechManager", "Error instanciando TextToSpeech", e)
+        }
     }
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            val result = tts?.setLanguage(Locale("es", "PE")) // Español de Perú
+            val result = tts?.setLanguage(Locale("es", "PE"))
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Fallback a español general
                 tts?.setLanguage(Locale("es", "ES"))
             }
             tts?.setAudioAttributes(
                 AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM) // Se escucha fuerte como alarma/notificación comercial
+                    .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build()
             )
             isInitialized = true
 
-            // Hablar mensajes pendientes si había alguno
             synchronized(pendingMessages) {
                 pendingMessages.forEach { speakRaw(it) }
                 pendingMessages.clear()
@@ -51,18 +52,15 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
     fun speakPayment(payment: PaymentItem, settings: AppSettings) {
         if (!settings.speakerEnabled) return
 
-        // 1. Play Chime / Campanilla de aviso
+        ensureAudibleVolume()
+
         if (settings.chimeBeforeSpeaking) {
             playChime()
         }
 
-        // 2. Construir frase
         val message = buildSpeechText(payment, settings)
-
-        // 3. Adquirir WakeLock temporal de 5 segundos para que la CPU no se duerma
         acquireWakeLock()
 
-        // 4. Configurar pitch y velocidad
         tts?.setPitch(settings.speechPitch)
         tts?.setSpeechRate(settings.speechRate)
 
@@ -72,6 +70,20 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
             synchronized(pendingMessages) {
                 pendingMessages.add(message)
             }
+        }
+    }
+
+    private fun ensureAudibleVolume() {
+        try {
+            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            val currentVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+            // Si el volumen está silenciado o muy bajo, asegurar al menos 75%
+            if (currentVol < (maxVol * 0.35)) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (maxVol * 0.75).toInt(), 0)
+            }
+        } catch (e: Exception) {
+            Log.e("SpeechManager", "Error ajustando volumen", e)
         }
     }
 
@@ -93,18 +105,23 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         }
     }
 
-    fun testVoice(sampleText: String = "¡Yape recibido! Quince soles de Juan Pérez") {
+    fun testVoice(sampleText: String = "¡Yape recibido! Quince soles con cincuenta de Juan Pérez") {
+        ensureAudibleVolume()
         playChime()
         speakRaw(sampleText)
     }
 
     private fun speakRaw(text: String) {
-        tts?.speak(
-            text,
-            TextToSpeech.QUEUE_FLUSH,
-            null,
-            "PAYMENT_VOICE_${System.currentTimeMillis()}"
-        )
+        try {
+            tts?.speak(
+                text,
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                "PAYMENT_VOICE_${System.currentTimeMillis()}"
+            )
+        } catch (e: Exception) {
+            Log.e("SpeechManager", "Error en speakRaw", e)
+        }
     }
 
     private fun playChime() {
@@ -123,16 +140,18 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
                 PowerManager.PARTIAL_WAKE_LOCK,
                 "ParlanteCobros:SpeechWakeLock"
             )
-            wakeLock.acquire(4000) // 4 segundos
+            wakeLock.acquire(4000)
         } catch (e: Exception) {
             Log.e("SpeechManager", "Error con WakeLock", e)
         }
     }
 
     fun shutdown() {
-        tts?.stop()
-        tts?.shutdown()
-        tts = null
-        isInitialized = false
+        try {
+            tts?.stop()
+            tts?.shutdown()
+            tts = null
+            isInitialized = false
+        } catch (_: Exception) {}
     }
 }
