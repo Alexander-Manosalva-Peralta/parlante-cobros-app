@@ -34,7 +34,7 @@ class PunkKeepAliveService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "punk Altavoz Permanente",
+                "Punk Altavoz Permanente",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = "Mantiene el altavoz activo con la pantalla apagada"
@@ -51,9 +51,9 @@ class PunkKeepAliveService : Service() {
         )
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("punk altavoz activo")
+            .setContentTitle("Punk altavoz activo")
             .setContentText("Escuchando cobros de Yape, Plin y bancos en segundo plano")
-            .setSmallIcon(R.drawable.logo_punk)
+            .setSmallIcon(R.drawable.logo_p_solo)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)

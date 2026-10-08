@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">punk</string>
-    <string name="notification_channel_name">Canal de Cobros punk</string>
-    <string name="notification_channel_desc">Alertas de voz para Yape y billeteras</string>
+    <string name="app_name">Punk</string>
+    <string name="notification_channel_name">Canal de Cobros Punk</string>
+    <string name="notification_channel_desc">Alertas de voz para Yape y billeteras digitales</string>
 </resources>

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.parlantecobros.app.R
 import com.parlantecobros.app.data.PaymentRepository
+import com.parlantecobros.app.data.SessionManager
 import com.parlantecobros.app.model.AppSource
 import com.parlantecobros.app.model.PaymentItem
 import com.parlantecobros.app.ui.theme.*
@@ -45,7 +46,8 @@ fun HomeScreen(
     onRequestIgnoreBatteryOptimization: () -> Unit = {},
     onOpenAppSettings: () -> Unit,
     onRebindService: () -> Unit,
-    onTestVoice: (String) -> Unit
+    onTestVoice: (String) -> Unit,
+    onLogout: () -> Unit = {}
 ) {
     val payments by PaymentRepository.payments.collectAsState()
     val settings by PaymentRepository.settings.collectAsState()
@@ -89,7 +91,8 @@ fun HomeScreen(
                     settings = settings,
                     onOpenAppSettings = onOpenAppSettings,
                     onRebindService = onRebindService,
-                    onTestVoice = onTestVoice
+                    onTestVoice = onTestVoice,
+                    onLogout = onLogout
                 )
             }
         }
@@ -212,10 +215,10 @@ fun CashierContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    // Logo punk oficial
+                    // Logo P de Punk oficial
                     Image(
-                        painter = painterResource(id = R.drawable.logo_punk),
-                        contentDescription = "punk logo",
+                        painter = painterResource(id = R.drawable.logo_p_solo),
+                        contentDescription = "Punk Logo",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(42.dp)
@@ -232,7 +235,7 @@ fun CashierContent(
                             )
                         )
                         Text(
-                            text = "punk cobros",
+                            text = "Punk Cobros",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = TextMain,
@@ -624,7 +627,7 @@ fun CashierContent(
                             )
                         )
                         Text(
-                            text = "Cuando te yapeen o transfieran, punk anunciará el monto por altavoz y se registrará aquí.",
+                            text = "Cuando te yapeen o transfieran, Punk anunciará el monto por altavoz y se registrará aquí.",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = TextMuted,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -646,8 +649,11 @@ fun SettingsContent(
     settings: com.parlantecobros.app.model.AppSettings,
     onOpenAppSettings: () -> Unit,
     onRebindService: () -> Unit,
-    onTestVoice: (String) -> Unit
+    onTestVoice: (String) -> Unit,
+    onLogout: () -> Unit = {}
 ) {
+    val session by SessionManager.sessionState.collectAsState()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -663,12 +669,107 @@ fun SettingsContent(
                     style = MaterialTheme.typography.bodyMedium.copy(color = TextMuted)
                 )
                 Text(
-                    text = "Ajustes de punk",
+                    text = "Ajustes de Punk",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = TextMain
                     )
                 )
+            }
+        }
+
+        // Tarjeta de Cuenta y Licencia Activa
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Comercio Autorizado",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = TextMuted,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                            )
+                            Text(
+                                text = session.merchantName.ifEmpty { "Mi Negocio" },
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextMain
+                                )
+                            )
+                        }
+
+                        // Pill Licencia Activa
+                        Surface(
+                            color = EmeraldGlow,
+                            shape = RoundedCornerShape(20.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreen.copy(alpha = 0.3f))
+                        ) {
+                            Text(
+                                text = "Activa (${session.daysRemaining}d)",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = EmeraldGreen,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Correo:",
+                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                            )
+                            Text(
+                                text = session.userEmail.ifEmpty { "admin@punk.com" },
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextMain
+                                )
+                            )
+                        }
+
+                        OutlinedButton(
+                            onClick = onLogout,
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFDC2626)),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFCA5A5)),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Logout,
+                                contentDescription = "Cerrar Sesión",
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Salir",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+                            )
+                        }
+                    }
+                }
             }
         }
 

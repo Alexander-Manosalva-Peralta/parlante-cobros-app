@@ -15,14 +15,23 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.core.app.NotificationManagerCompat
 import com.parlantecobros.app.data.PaymentRepository
+import com.parlantecobros.app.data.SessionManager
 import com.parlantecobros.app.service.CobrosNotificationListener
 import com.parlantecobros.app.service.PunkKeepAliveService
 import com.parlantecobros.app.service.SpeechManager
 import com.parlantecobros.app.ui.screens.HomeScreen
+import com.parlantecobros.app.ui.screens.LoginScreen
+import com.parlantecobros.app.ui.screens.SplashScreen
 import com.parlantecobros.app.ui.theme.ParlanteCobrosTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+enum class AppScreen {
+    SPLASH,
+    LOGIN,
+    HOME
+}
 
 class MainActivity : ComponentActivity() {
 
@@ -32,22 +41,44 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SessionManager.init(applicationContext)
         speechManager = SpeechManager(applicationContext)
 
-        // Iniciar servicio en primer plano para mantener punk activo 24/7 con pantalla apagada
+        // Iniciar servicio en primer plano para mantener Punk activo 24/7 con pantalla apagada
         PunkKeepAliveService.start(applicationContext)
 
         setContent {
             ParlanteCobrosTheme {
-                HomeScreen(
-                    isNotificationPermissionGranted = isListenerEnabled,
-                    isBatteryOptimizationIgnored = isBatteryOptIgnored,
-                    onRequestPermission = { openNotificationListenerSettings() },
-                    onRequestIgnoreBatteryOptimization = { requestIgnoreBatteryOptimizations() },
-                    onOpenAppSettings = { openAppSettings() },
-                    onRebindService = { forceRebindAndTest() },
-                    onTestVoice = { sampleText -> speechManager.testVoice(sampleText) }
-                )
+                var currentScreen by remember { mutableStateOf(AppScreen.SPLASH) }
+
+                when (currentScreen) {
+                    AppScreen.SPLASH -> {
+                        SplashScreen(
+                            onNavigateToHome = { currentScreen = AppScreen.HOME },
+                            onNavigateToLogin = { currentScreen = AppScreen.LOGIN }
+                        )
+                    }
+                    AppScreen.LOGIN -> {
+                        LoginScreen(
+                            onLoginSuccess = { currentScreen = AppScreen.HOME }
+                        )
+                    }
+                    AppScreen.HOME -> {
+                        HomeScreen(
+                            isNotificationPermissionGranted = isListenerEnabled,
+                            isBatteryOptimizationIgnored = isBatteryOptIgnored,
+                            onRequestPermission = { openNotificationListenerSettings() },
+                            onRequestIgnoreBatteryOptimization = { requestIgnoreBatteryOptimizations() },
+                            onOpenAppSettings = { openAppSettings() },
+                            onRebindService = { forceRebindAndTest() },
+                            onTestVoice = { sampleText -> speechManager.testVoice(sampleText) },
+                            onLogout = {
+                                SessionManager.logout()
+                                currentScreen = AppScreen.LOGIN
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -114,7 +145,7 @@ class MainActivity : ComponentActivity() {
         val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
         PaymentRepository.recordRawNotification("[$time] Servicio reconectado manualmente por el usuario.")
         Toast.makeText(this, "Servicio reconectado. Probando altavoz...", Toast.LENGTH_SHORT).show()
-        speechManager.testVoice("¡punk reconectado y funcionando correctamente!")
+        speechManager.testVoice("¡Punk reconectado y funcionando correctamente!")
     }
 
     private fun openNotificationListenerSettings() {

@@ -42,15 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.7
-        name: "punk v1.0.7 (Pantalla Apagada 24/7 y Concurrencia Rápida Bancaria)"
+        tag_name: v1.0.8
+        name: "Punk v1.0.8 (Splash Screen, Login con Credenciales, Identidad Oficial)"
         body: |
-          ### punk v1.0.7 - Funcionamiento con Pantalla Apagada & Alta Concurrencia
+          ### Punk v1.0.8 - Splash Screen & Inicio de Sesión de Licencias
           
-          - **Pantalla Apagada 24/7:** Servicio permanente en primer plano (`PunkKeepAliveService`) y audio enrutado por canal de alarma (`USAGE_ALARM` + WakeLock). Funciona con el celular bloqueado y fuera de la app.
-          - **Algoritmo de Concurrencia Bancaria:** Maneja depósitos seguidos en ráfaga (ej. 3 Yapes en segundos). Cada cobro es registrado individualmente sin perder transacciones.
-          - **Cola de Voz Secuencial (`QUEUE_ADD`):** Si llegan varios cobros seguidos, el altavoz los anuncia uno tras otro en orden sin cortarse.
-          - **Auto-Reconexión:** Si el sistema operativo intenta desvincular el servicio en segundo plano, se reconecta automáticamente al instante.
+          - **Splash Screen de Entrada:** Presentación de bienvenida con animación y el logo completo de Punk.
+          - **Inicio de Sesión (Login):** Acceso seguro con correo y contraseña para comercios autorizados, con persistencia de sesión y protección por dispositivo.
+          - **Identidad Oficial "Punk":** Icono oficial con la P gótica estilizada y tipografía con P mayúscula en toda la aplicación.
+          - **Gestión de Cuenta & Licencia:** Información de licencia activa en Ajustes con opción de Cerrar Sesión.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
