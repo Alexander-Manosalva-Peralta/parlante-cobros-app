@@ -1,0 +1,57 @@
+name: Compilar APK Parlante Cobros
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Descargar repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Configurar Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Generar Wrapper
+      run: |
+        gradle wrapper --gradle-version 8.2
+        chmod +x gradlew
+
+    - name: Compilar APK Debug
+      run: ./gradlew assembleDebug --stacktrace
+
+    - name: Subir APK como Artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: ParlanteCobros-APK
+        path: app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Publicar Release para descarga directa en Celular
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.0
+        name: "Parlante Cobros v1.0.0 (APK Instalable)"
+        body: |
+          ### ¡Tu aplicación está lista para instalar! 🚀
+          
+          **Para instalar en tu celular Android:**
+          1. Descarga el archivo adjunto `app-debug.apk` directamente desde tu teléfono.
+          2. Abre el archivo descargado y presiona **Instalar**.
+          3. Si tu celular te avisa, activa *"Permitir la instalación de fuentes desconocidas"*.
+          4. Al abrir la app, dale el permiso de **Acceso a Notificaciones** para que escuche a Yape y Plin.
+        files: app/build/outputs/apk/debug/app-debug.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,13 @@
+<resources>
+    <!-- Apple System Colors -->
+    <color name="apple_background">#F5F5F7</color>
+    <color name="apple_card_bg">#FFFFFF</color>
+    <color name="apple_blue">#0071E3</color>
+    <color name="apple_text_primary">#1D1D1F</color>
+    <color name="apple_text_secondary">#86868B</color>
+    <color name="apple_border">#E5E5EA</color>
+    <color name="apple_green">#34C759</color>
+    <color name="apple_orange">#FF9500</color>
+    <color name="yape_purple">#732282</color>
+    <color name="plin_cyan">#00A3E0</color>
+</resources>

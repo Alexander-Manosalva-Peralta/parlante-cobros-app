@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.ParlanteCobros" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#F5F5F7</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:windowBackground">#F5F5F7</item>
+    </style>
+</resources>

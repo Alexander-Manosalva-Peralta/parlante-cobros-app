@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Parlante Cobros</string>
+    <string name="notification_channel_name">Canal de Cobros</string>
+    <string name="notification_channel_desc">Alertas sonoras para pagos y transferencias</string>
+</resources>

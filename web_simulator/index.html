@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parlante Cobros - Simulador Apple</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      background-color: #F5F5F7;
+      color: #1D1D1F;
+      -webkit-font-smoothing: antialiased;
+    }
+    .apple-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E5EA;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }
+    .apple-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 28px;
+    }
+    .apple-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #E5E5EA;
+      transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    input:checked + .slider {
+      background-color: #34C759;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen">
+  <div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Header Estilo Apple -->
+    <header class="flex items-center justify-between py-2">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-[#1D1D1F]">Parlante Cobros</h1>
+        <p class="text-sm text-[#86868B] mt-0.5">Alertas de voz para Yape, Plin y transferencias bancarias</p>
+      </div>
+      <div id="statusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100">
+        <span class="w-2 h-2 rounded-full bg-[#34C759] animate-pulse"></span>
+        <span class="text-xs font-semibold text-[#34C759]">En Escucha</span>
+      </div>
+    </header>
+
+    <!-- Tarjeta Principal KPI (Apple Clean Metrics) -->
+    <section class="apple-card p-6 sm:p-8">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-bold tracking-wider text-[#86868B] uppercase">Total Recaudado Hoy</span>
+        <span id="txCount" class="text-xs font-medium text-[#86868B]">0 cobros registrados</span>
+      </div>
+      <div class="text-4xl sm:text-5xl font-bold tracking-tight text-[#1D1D1F] my-3" id="totalAmount">
+        S/ 0.00
+      </div>
+
+      <div class="pt-4 mt-4 border-t border-[#E5E5EA] flex items-center justify-between">
+        <div>
+          <div class="text-sm font-semibold text-[#1D1D1F]">Parlante de Voz Activo</div>
+          <div class="text-xs text-[#86868B]">Anunciar por altavoz cada cobro entrante</div>
+        </div>
+        <label class="apple-switch">
+          <input type="checkbox" id="speakerToggle" checked onchange="toggleSpeaker(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Simulador de Notificaciones Rápidas -->
+    <section class="apple-card p-6">
+      <div class="mb-4">
+        <h2 class="text-lg font-semibold text-[#1D1D1F]">Probar Parlante en Vivo</h2>
+        <p class="text-xs text-[#86868B]">Haz clic en cualquier botón para simular una notificación y escuchar la voz:</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Simular Yape -->
+        <button onclick="simulatePayment('Yape', 'Carlos Mendoza', 25.00)" class="flex flex-col items-start p-4 rounded-xl border border-[#E5E5EA] bg-[#F5F5F7] hover:bg-[#732282]/5 hover:border-[#732282]/30 transition-all text-left group">
+          <span class="text-xs font-bold text-[#732282] uppercase tracking-wide">Yape</span>
+          <span class="text-xl font-bold text-[#1D1D1F] mt-1">S/ 25.00</span>
+          <span class="text-xs text-[#86868B] mt-0.5">Carlos Mendoza</span>
+        </button>
+
+        <!-- Simular Plin -->
+        <button onclick="simulatePayment('Plin', 'María Rojas', 18.50)" class="flex flex-col items-start p-4 rounded-xl border border-[#E5E5EA] bg-[#F5F5F7] hover:bg-[#00A3E0]/5 hover:border-[#00A3E0]/30 transition-all text-left group">
+          <span class="text-xs font-bold text-[#00A3E0] uppercase tracking-wide">Plin</span>
+          <span class="text-xl font-bold text-[#1D1D1F] mt-1">S/ 18.50</span>
+          <span class="text-xs text-[#86868B] mt-0.5">María Rojas</span>
+        </button>
+
+        <!-- Simular BCP -->
+        <button onclick="simulatePayment('BCP', 'Luis Fernández', 120.00)" class="flex flex-col items-start p-4 rounded-xl border border-[#E5E5EA] bg-[#F5F5F7] hover:bg-[#002A8F]/5 hover:border-[#002A8F]/30 transition-all text-left group">
+          <span class="text-xs font-bold text-[#002A8F] uppercase tracking-wide">BCP Abono</span>
+          <span class="text-xl font-bold text-[#1D1D1F] mt-1">S/ 120.00</span>
+          <span class="text-xs text-[#86868B] mt-0.5">Luis Fernández</span>
+        </button>
+      </div>
+
+      <!-- Simulador Personalizado -->
+      <div class="mt-5 pt-4 border-t border-[#E5E5EA]">
+        <label class="text-xs font-medium text-[#86868B] block mb-2">O prueba pegando el texto exacto de una notificación:</label>
+        <div class="flex gap-2">
+          <input type="text" id="customInput" placeholder="Ej: Te llegó un Yape de Ana Lopez por S/ 45.00" class="flex-1 px-3.5 py-2 text-sm rounded-xl border border-[#E5E5EA] focus:outline-none focus:border-[#0071E3] bg-[#F5F5F7]">
+          <button onclick="processCustomInput()" class="px-4 py-2 text-sm font-semibold text-white bg-[#0071E3] hover:bg-[#0062C4] rounded-xl transition-colors">
+            Simular
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Opciones de Configuración -->
+    <section class="apple-card p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-[#1D1D1F]">Configuración de Voz</h2>
+      
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-sm font-medium text-[#1D1D1F]">Mencionar nombre de quien paga</div>
+          <div class="text-xs text-[#86868B]">Ej: "Veinticinco soles de Carlos Mendoza"</div>
+        </div>
+        <label class="apple-switch">
+          <input type="checkbox" id="nameToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-[#E5E5EA] pt-4">
+        <div>
+          <div class="text-sm font-medium text-[#1D1D1F]">Campanilla previa (Chime)</div>
+          <div class="text-xs text-[#86868B]">Emite un tono suave antes de que hable</div>
+        </div>
+        <label class="apple-switch">
+          <input type="checkbox" id="chimeToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="testSpeechSample()" class="w-full py-2.5 px-4 rounded-xl border border-[#0071E3] text-[#0071E3] font-semibold text-sm hover:bg-[#0071E3]/5 transition-colors">
+          🔊 Probar Voz Ahora
+        </button>
+      </div>
+    </section>
+
+    <!-- Historial de Cobros Recientes -->
+    <section class="apple-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-[#1D1D1F]">Historial de Cobros Recientes</h2>
+        <button onclick="clearHistory()" class="text-xs font-medium text-[#86868B] hover:text-[#FF3B30] transition-colors">
+          Limpiar
+        </button>
+      </div>
+
+      <div id="historyList" class="space-y-3">
+        <!-- Estado Vacío -->
+        <div id="emptyState" class="text-center py-10">
+          <div class="text-3xl mb-2">🔔</div>
+          <p class="text-sm font-medium text-[#86868B]">No hay cobros registrados aún</p>
+          <p class="text-xs text-[#86868B]/80 mt-1">Presiona cualquiera de los botones de arriba para probar</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    let total = 0.0;
+    let count = 0;
+    let speakerActive = true;
+
+    // Generador de audio Chime usando Web Audio API (100% nativo)
+    function playChime() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota La (A5)
+        osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.15); // Nota Mi (E6)
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Sintetizador de voz
+    function speakText(text) {
+      if (!speakerActive) return;
+      if (!('speechSynthesis' in window)) {
+        alert("Tu navegador no soporta síntesis de voz.");
+        return;
+      }
+
+      window.speechSynthesis.cancel(); // Cancelar anteriores
+
+      const doSpeak = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-PE';
+        utterance.rate = 0.95; // Ritmo claro
+        utterance.pitch = 1.0;
+
+        // Intentar buscar voz en español
+        const voices = window.speechSynthesis.getVoices();
+        const esVoice = voices.find(v => v.lang.startsWith('es'));
+        if (esVoice) utterance.voice = esVoice;
+
+        window.speechSynthesis.speak(utterance);
+      };
+
+      if (document.getElementById('chimeToggle').checked) {
+        playChime();
+        setTimeout(doSpeak, 250);
+      } else {
+        doSpeak();
+      }
+    }
+
+    function toggleSpeaker(val) {
+      speakerActive = val;
+      const badge = document.getElementById('statusBadge');
+      if (val) {
+        badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100";
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#34C759] animate-pulse"></span><span class="text-xs font-semibold text-[#34C759]">En Escucha</span>';
+      } else {
+        badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 border border-gray-200";
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-gray-400"></span><span class="text-xs font-semibold text-gray-500">Pausado</span>';
+      }
+    }
+
+    function testSpeechSample() {
+      speakText("¡Yape recibido! Quince soles con cincuenta de Juan Pérez");
+    }
+
+    function simulatePayment(app, sender, amount) {
+      total += amount;
+      count++;
+
+      document.getElementById('totalAmount').textContent = `S/ ${total.toFixed(2)}`;
+      document.getElementById('txCount').textContent = `${count} cobros registrados`;
+
+      const includeName = document.getElementById('nameToggle').checked;
+      const soles = Math.floor(amount);
+      const centavos = Math.round((amount - soles) * 100);
+      const amountStr = centavos > 0 ? `${soles} soles con ${centavos} céntimos` : `${soles} soles`;
+
+      const speechMessage = includeName 
+        ? `¡${app} recibido! ${amountStr} de ${sender}` 
+        : `¡${app} recibido! ${amountStr}`;
+
+      speakText(speechMessage);
+      addHistoryItem(app, sender, amount);
+    }
+
+    function processCustomInput() {
+      const input = document.getElementById('customInput').value.trim();
+      if (!input) return;
+
+      // Parser regex
+      let app = 'Yape';
+      if (/plin/i.test(input)) app = 'Plin';
+      else if (/bcp/i.test(input)) app = 'BCP';
+      else if (/interbank/i.test(input)) app = 'Interbank';
+      else if (/bbva/i.test(input)) app = 'BBVA';
+
+      // Monto
+      const amountMatch = input.match(/(?:S\/?\.?|Soles?)\s*(\d+(?:[\.,]\d{1,2})?)/i) || input.match(/(\d+(?:[\.,]\d{2}))\s*(?:soles|S\/)/i);
+      const amount = amountMatch ? parseFloat(amountMatch[1].replace(',', '.')) : 20.0;
+
+      // Remitente
+      const senderMatch = input.match(/de\s+([A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,25}?)(?:\s+por|\s+a|\.|$|S\/)/i);
+      const sender = senderMatch ? senderMatch[1].trim() : "Cliente";
+
+      simulatePayment(app, sender, amount);
+      document.getElementById('customInput').value = '';
+    }
+
+    function addHistoryItem(app, sender, amount) {
+      const emptyState = document.getElementById('emptyState');
+      if (emptyState) emptyState.remove();
+
+      const list = document.getElementById('historyList');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      let badgeBg = 'bg-[#732282]/10 text-[#732282]';
+      if (app === 'Plin') badgeBg = 'bg-[#00A3E0]/10 text-[#00A3E0]';
+      else if (app === 'BCP') badgeBg = 'bg-[#002A8F]/10 text-[#002A8F]';
+
+      const item = document.createElement('div');
+      item.className = "flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5EA] bg-[#FFFFFF] hover:bg-[#F5F5F7] transition-colors";
+      item.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl ${badgeBg} font-bold flex items-center justify-center text-sm">
+            ${app.charAt(0)}
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-[#1D1D1F]">${sender}</div>
+            <div class="text-xs text-[#86868B]">${app} • ${timeStr}</div>
+          </div>
+        </div>
+        <div class="text-base font-bold text-[#1D1D1F]">
+          S/ ${amount.toFixed(2)}
+        </div>
+      `;
+
+      list.insertBefore(item, list.firstChild);
+    }
+
+    function clearHistory() {
+      total = 0.0;
+      count = 0;
+      document.getElementById('totalAmount').textContent = 'S/ 0.00';
+      document.getElementById('txCount').textContent = '0 cobros registrados';
+      document.getElementById('historyList').innerHTML = `
+        <div id="emptyState" class="text-center py-10">
+          <div class="text-3xl mb-2">🔔</div>
+          <p class="text-sm font-medium text-[#86868B]">No hay cobros registrados aún</p>
+          <p class="text-xs text-[#86868B]/80 mt-1">Presiona cualquiera de los botones de arriba para probar</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
