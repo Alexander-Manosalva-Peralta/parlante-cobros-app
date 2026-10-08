@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Parlante Cobros - Neo Fintech</title>
+  <title>punk - BI & Cobros Inteligentes</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     body {
@@ -20,18 +20,23 @@
     .luxury-card {
       background: #FFFFFF;
       border: 1px solid #E5E7EB;
-      border-radius: 20px;
+      border-radius: 22px;
     }
   </style>
 </head>
-<body class="p-4 sm:p-8 min-h-screen">
+<body class="p-4 sm:p-8 min-h-screen pb-28">
   <div class="max-w-md mx-auto space-y-5">
 
-    <!-- Header Neo-Fintech -->
+    <!-- Top Bar con punk y saludo dinámico -->
     <header class="flex items-center justify-between py-2">
-      <div>
-        <div class="text-xs font-medium text-[#6B7280]">Mi Negocio</div>
-        <h1 class="text-2xl font-bold tracking-tight text-[#111827]">Caja de Cobros</h1>
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-[#10141A] flex items-center justify-center font-black text-xl text-[#10B981] shadow-sm">
+          p
+        </div>
+        <div>
+          <div class="text-xs font-medium text-[#6B7280]" id="greetingText">Buenos días ☀️</div>
+          <h1 class="text-xl font-bold tracking-tight text-[#111827]">punk cobros</h1>
+        </div>
       </div>
       <div id="statusPill" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
         <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
@@ -39,189 +44,235 @@
       </div>
     </header>
 
-    <!-- Tarjeta Hero Obsidian (Inspirada en las imágenes de referencia) -->
-    <section class="obsidian-card p-6 sm:p-7 text-white shadow-xl relative overflow-hidden">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-[11px] font-bold tracking-wider text-[#9CA3AF] uppercase">Total Recaudado Hoy</span>
-        <button onclick="toggleVisibility()" class="text-[#9CA3AF] hover:text-white transition-colors">
-          <svg id="eyeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-        </button>
-      </div>
+    <!-- Vista 1: CAJA (Home) -->
+    <main id="tabCaja" class="space-y-5">
+      <!-- Tarjeta Hero Obsidian -->
+      <section class="obsidian-card p-6 sm:p-7 text-white shadow-xl relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-bold tracking-wider text-[#9CA3AF] uppercase">Total Recaudado Hoy</span>
+          <button onclick="toggleVisibility()" class="text-[#9CA3AF] hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </button>
+        </div>
 
-      <div class="text-4xl font-bold tracking-tight mb-4" id="mainAmount">
-        S/ 0.00
-      </div>
+        <div class="text-4xl font-bold tracking-tight mb-4" id="mainAmount">
+          S/ 0.00
+        </div>
 
-      <div class="flex items-center gap-2 mb-5">
-        <span class="px-2.5 py-1 rounded-xl bg-[#1F242C] text-xs font-medium text-[#D1D5DB]" id="txCount">
-          0 cobros registrados
-        </span>
-      </div>
+        <div class="flex items-center gap-2 mb-5">
+          <span class="px-2.5 py-1 rounded-xl bg-[#1F242C] text-xs font-medium text-[#D1D5DB]" id="txCount">
+            0 cobros registrados
+          </span>
+          <span class="px-2.5 py-1 rounded-xl bg-[#1F242C] text-xs font-medium text-[#D1D5DB]" id="avgTicketHero">
+            Ticket prom. S/ 0.00
+          </span>
+        </div>
 
-      <div class="pt-4 border-t border-[#262C36] flex items-center justify-between">
-        <div>
-          <div class="text-sm font-semibold">Altavoz de Cobros</div>
-          <div class="text-xs text-[#9CA3AF]">Anunciar pagos en voz alta</div>
-        </div>
-        <button id="toggleBtn" onclick="toggleSpeaker()" class="w-12 h-7 bg-[#10B981] rounded-full p-1 transition-colors relative">
-          <div id="toggleDot" class="w-5 h-5 bg-white rounded-full shadow-md transform translate-x-5 transition-transform"></div>
-        </button>
-      </div>
-    </section>
-
-    <!-- Módulo de Controles Bento (Squircles elegantes) -->
-    <section class="grid grid-cols-3 gap-3">
-      <!-- Probar Voz -->
-      <button onclick="testSpeech()" class="luxury-card p-4 flex flex-col items-start gap-2 hover:bg-gray-50 transition-all text-left">
-        <div class="w-9 h-9 rounded-xl bg-[#F4F5F8] flex items-center justify-center text-sm">
-          🔊
-        </div>
-        <div>
-          <div class="text-xs font-bold text-[#111827]">Probar Voz</div>
-          <div class="text-[10px] text-[#6B7280]">Audición</div>
-        </div>
-      </button>
-
-      <!-- Nombre -->
-      <button onclick="toggleName()" class="luxury-card p-4 flex flex-col items-start gap-2 hover:bg-gray-50 transition-all text-left">
-        <div class="w-9 h-9 rounded-xl bg-[#F4F5F8] flex items-center justify-center text-sm">
-          👤
-        </div>
-        <div>
-          <div class="text-xs font-bold text-[#111827]">Nombre</div>
-          <div id="nameStatus" class="text-[10px] font-semibold text-[#10B981]">Activado</div>
-        </div>
-      </button>
-
-      <!-- Campanilla -->
-      <button onclick="toggleChime()" class="luxury-card p-4 flex flex-col items-start gap-2 hover:bg-gray-50 transition-all text-left">
-        <div class="w-9 h-9 rounded-xl bg-[#F4F5F8] flex items-center justify-center text-sm">
-          🔔
-        </div>
-        <div>
-          <div class="text-xs font-bold text-[#111827]">Campana</div>
-          <div id="chimeStatus" class="text-[10px] font-semibold text-[#10B981]">Activada</div>
-        </div>
-      </button>
-    </section>
-
-    <!-- Billeteras Vinculadas (Carrusel) -->
-    <section class="space-y-2.5">
-      <h2 class="text-sm font-bold text-[#111827]">Billeteras Vinculadas</h2>
-      <div class="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar">
-        <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
-          <span class="w-5 h-5 rounded-full bg-[#732282]/15 text-[#732282] font-bold text-[10px] flex items-center justify-center">Y</span>
-          <span class="text-xs font-semibold text-[#111827]">Yape</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
-        </div>
-        <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
-          <span class="w-5 h-5 rounded-full bg-[#00A3E0]/15 text-[#00A3E0] font-bold text-[10px] flex items-center justify-center">P</span>
-          <span class="text-xs font-semibold text-[#111827]">Plin</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
-        </div>
-        <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
-          <span class="w-5 h-5 rounded-full bg-[#002A8F]/15 text-[#002A8F] font-bold text-[10px] flex items-center justify-center">B</span>
-          <span class="text-xs font-semibold text-[#111827]">BCP</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
-        </div>
-        <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
-          <span class="w-5 h-5 rounded-full bg-[#009B3A]/15 text-[#009B3A] font-bold text-[10px] flex items-center justify-center">I</span>
-          <span class="text-xs font-semibold text-[#111827]">Interbank</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Historial de Cobros Recientes -->
-    <section class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-bold text-[#111827]">Cobros Recientes</h2>
-        <span class="text-xs text-[#6B7280]">Hoy</span>
-      </div>
-
-      <div id="txList" class="space-y-2.5">
-        <!-- Empty State -->
-        <div class="luxury-card p-8 text-center">
-          <div class="w-12 h-12 rounded-full bg-[#F4F5F8] mx-auto flex items-center justify-center text-xl mb-2.5">
-            💳
+        <div class="pt-4 border-t border-[#262C36] flex items-center justify-between">
+          <div>
+            <div class="text-sm font-semibold">Altavoz punk</div>
+            <div class="text-xs text-[#9CA3AF]">Anunciar pagos en voz alta</div>
           </div>
-          <div class="text-xs font-semibold text-[#111827]">A la espera de tus cobros</div>
-          <div class="text-[11px] text-[#6B7280] mt-1 max-w-xs mx-auto">
-            Apenas un cliente te yapee o transfiera, el parlante anunciará el monto en voz alta y se registrará aquí.
+          <button id="toggleBtn" onclick="toggleSpeaker()" class="w-12 h-7 bg-[#10B981] rounded-full p-1 transition-colors relative">
+            <div id="toggleDot" class="w-5 h-5 bg-white rounded-full shadow-md transform translate-x-5 transition-transform"></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Billeteras Vinculadas -->
+      <section class="space-y-2.5">
+        <h2 class="text-sm font-bold text-[#111827]">Billeteras Conectadas</h2>
+        <div class="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar">
+          <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
+            <span class="w-5 h-5 rounded-full bg-[#732282]/15 text-[#732282] font-bold text-[10px] flex items-center justify-center">Y</span>
+            <span class="text-xs font-semibold text-[#111827]">Yape</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+          </div>
+          <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
+            <span class="w-5 h-5 rounded-full bg-[#00A3E0]/15 text-[#00A3E0] font-bold text-[10px] flex items-center justify-center">P</span>
+            <span class="text-xs font-semibold text-[#111827]">Plin</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+          </div>
+          <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
+            <span class="w-5 h-5 rounded-full bg-[#002A8F]/15 text-[#002A8F] font-bold text-[10px] flex items-center justify-center">B</span>
+            <span class="text-xs font-semibold text-[#111827]">BCP</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+          </div>
+          <div class="luxury-card px-3.5 py-2 flex items-center gap-2 whitespace-nowrap">
+            <span class="w-5 h-5 rounded-full bg-[#009B3A]/15 text-[#009B3A] font-bold text-[10px] flex items-center justify-center">I</span>
+            <span class="text-xs font-semibold text-[#111827]">Interbank</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
           </div>
         </div>
+      </section>
+
+      <!-- Historial de Cobros Recientes -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-[#111827]">Cobros Recientes</h2>
+          <span class="text-xs text-[#6B7280]">Hoy</span>
+        </div>
+
+        <div id="txList" class="space-y-2.5">
+          <div class="luxury-card p-8 text-center">
+            <div class="w-12 h-12 rounded-full bg-[#F4F5F8] mx-auto flex items-center justify-center text-xl mb-2.5">
+              💳
+            </div>
+            <div class="text-xs font-semibold text-[#111827]">A la espera de cobros</div>
+            <div class="text-[11px] text-[#6B7280] mt-1 max-w-xs mx-auto">
+              Cuando un cliente te yapee, punk anunciará el monto por altavoz y se registrará aquí.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Vista 2: BI & ANALYTICS -->
+    <main id="tabBI" class="space-y-5 hidden">
+      <!-- Tarjeta KPI Ticket Promedio -->
+      <section class="obsidian-card p-6 sm:p-7 text-white shadow-xl">
+        <span class="text-[11px] font-bold tracking-wider text-[#9CA3AF] uppercase">Ticket Promedio por Venta</span>
+        <div class="text-4xl font-bold tracking-tight my-2" id="biAvgTicket">
+          S/ 0.00
+        </div>
+        <div class="pt-3 border-t border-[#262C36] flex items-center justify-between text-xs text-[#9CA3AF]">
+          <div>Mayor Cobro: <span class="text-[#10B981] font-bold" id="biMaxPayment">S/ 0.00</span></div>
+          <div>Cobros: <span class="text-white font-bold" id="biTxCount">0</span></div>
+        </div>
+      </section>
+
+      <!-- Gráfico de Barras: Horario Pico -->
+      <section class="luxury-card p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-[#111827]">Rendimiento por Horarios</h3>
+          <span class="text-xs text-[#6B7280]">Hoy</span>
+        </div>
+
+        <div class="flex items-end justify-between h-32 pt-4 px-2 border-b border-[#E5E7EB] pb-2">
+          <!-- Mañana -->
+          <div class="flex flex-col items-center gap-1.5 flex-1">
+            <span class="text-[10px] font-bold text-[#6B7280]" id="barValMorning">S/ 0</span>
+            <div class="w-8 bg-[#E5E7EB] rounded-t-lg transition-all" id="barMorning" style="height: 12px;"></div>
+            <span class="text-[10px] text-[#6B7280] mt-1">Mañana</span>
+          </div>
+          <!-- Almuerzo -->
+          <div class="flex flex-col items-center gap-1.5 flex-1">
+            <span class="text-[10px] font-bold text-[#10B981]" id="barValLunch">S/ 0</span>
+            <div class="w-8 bg-[#10B981] rounded-t-lg transition-all" id="barLunch" style="height: 12px;"></div>
+            <span class="text-[10px] font-semibold text-[#111827] mt-1">Almuerzo</span>
+          </div>
+          <!-- Tarde -->
+          <div class="flex flex-col items-center gap-1.5 flex-1">
+            <span class="text-[10px] font-bold text-[#6B7280]" id="barValAfternoon">S/ 0</span>
+            <div class="w-8 bg-[#E5E7EB] rounded-t-lg transition-all" id="barAfternoon" style="height: 12px;"></div>
+            <span class="text-[10px] text-[#6B7280] mt-1">Tarde</span>
+          </div>
+          <!-- Noche -->
+          <div class="flex flex-col items-center gap-1.5 flex-1">
+            <span class="text-[10px] font-bold text-[#6B7280]" id="barValNight">S/ 0</span>
+            <div class="w-8 bg-[#E5E7EB] rounded-t-lg transition-all" id="barNight" style="height: 12px;"></div>
+            <span class="text-[10px] text-[#6B7280] mt-1">Noche</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Participación por Billetera -->
+      <section class="luxury-card p-5 space-y-3.5">
+        <h3 class="text-sm font-bold text-[#111827]">Participación por Billetera</h3>
+        
+        <div class="space-y-3" id="walletBars">
+          <div>
+            <div class="flex justify-between text-xs font-medium mb-1">
+              <span class="text-[#732282] font-semibold">Yape</span>
+              <span id="yapeShareText">S/ 0.00 (100%)</span>
+            </div>
+            <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-[#732282] rounded-full" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Vista 3: AJUSTES -->
+    <main id="tabAjustes" class="space-y-5 hidden">
+      <section class="luxury-card p-5 space-y-4">
+        <h3 class="text-sm font-bold text-[#111827]">Preferencias de Voz</h3>
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-xs font-semibold text-[#111827]">Mencionar nombre de cliente</div>
+            <div class="text-[11px] text-[#6B7280]">Ej: '...de Carlos Mendoza'</div>
+          </div>
+          <input type="checkbox" checked class="w-4 h-4 accent-[#10B981]">
+        </div>
+        <div class="flex items-center justify-between border-t border-gray-100 pt-3">
+          <div>
+            <div class="text-xs font-semibold text-[#111827]">Campanilla previa (Chime)</div>
+            <div class="text-[11px] text-[#6B7280]">Tono suave antes del anuncio</div>
+          </div>
+          <input type="checkbox" checked class="w-4 h-4 accent-[#10B981]">
+        </div>
+      </section>
+    </main>
+
+    <!-- Dock Inferior Flotante (Floating Bottom Dock) -->
+    <nav class="fixed bottom-5 left-0 right-0 max-w-xs mx-auto">
+      <div class="luxury-card py-2 px-3 shadow-2xl flex items-center justify-around rounded-full border border-gray-200">
+        <button onclick="switchTab('caja')" id="dockCaja" class="px-4 py-2 rounded-full bg-[#10141A] text-white text-xs font-bold transition-all">
+          Caja
+        </button>
+        <button onclick="switchTab('bi')" id="dockBI" class="px-4 py-2 rounded-full text-[#6B7280] hover:text-[#111827] text-xs font-medium transition-all">
+          BI Métricas
+        </button>
+        <button onclick="switchTab('ajustes')" id="dockAjustes" class="px-4 py-2 rounded-full text-[#6B7280] hover:text-[#111827] text-xs font-medium transition-all">
+          Ajustes
+        </button>
       </div>
-    </section>
+    </nav>
 
   </div>
 
   <script>
     let total = 0.0;
     let count = 0;
-    let speakerActive = true;
-    let sayName = true;
-    let chimeActive = true;
+    let max = 0.0;
     let visible = true;
 
-    function playChime() {
-      if (!chimeActive) return;
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.35);
-      } catch (e) {}
-    }
+    // Saludo dinámico según la hora
+    const hr = new Date().getHours();
+    let greet = "Buenas noches 🌙";
+    if (hr >= 5 && hr < 12) greet = "Buenos días ☀️";
+    else if (hr >= 12 && hr < 19) greet = "Buenas tardes ⛅";
+    document.getElementById('greetingText').textContent = greet;
 
-    function testSpeech() {
-      playChime();
-      setTimeout(() => {
-        const u = new SpeechSynthesisUtterance("¡Yape recibido! Pago verificado correctamente");
-        u.lang = 'es-PE';
-        u.rate = 0.95;
-        window.speechSynthesis.speak(u);
-      }, chimeActive ? 250 : 0);
-    }
+    function switchTab(tab) {
+      document.getElementById('tabCaja').classList.add('hidden');
+      document.getElementById('tabBI').classList.add('hidden');
+      document.getElementById('tabAjustes').classList.add('hidden');
 
-    function toggleSpeaker() {
-      speakerActive = !speakerActive;
-      const dot = document.getElementById('toggleDot');
-      const btn = document.getElementById('toggleBtn');
-      const pill = document.getElementById('statusPill');
-      if (speakerActive) {
-        btn.className = "w-12 h-7 bg-[#10B981] rounded-full p-1 transition-colors relative";
-        dot.className = "w-5 h-5 bg-white rounded-full shadow-md transform translate-x-5 transition-transform";
-        pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span><span class="text-xs font-semibold text-[#10B981]">En Escucha</span>';
-      } else {
-        btn.className = "w-12 h-7 bg-[#262C36] rounded-full p-1 transition-colors relative";
-        dot.className = "w-5 h-5 bg-white rounded-full shadow-md transform translate-x-0 transition-transform";
-        pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#6B7280]"></span><span class="text-xs font-semibold text-[#6B7280]">En Pausa</span>';
+      ['dockCaja', 'dockBI', 'dockAjustes'].forEach(id => {
+        document.getElementById(id).className = "px-4 py-2 rounded-full text-[#6B7280] hover:text-[#111827] text-xs font-medium transition-all";
+      });
+
+      if (tab === 'caja') {
+        document.getElementById('tabCaja').classList.remove('hidden');
+        document.getElementById('dockCaja').className = "px-4 py-2 rounded-full bg-[#10141A] text-white text-xs font-bold transition-all";
+      } else if (tab === 'bi') {
+        document.getElementById('tabBI').classList.remove('hidden');
+        document.getElementById('dockBI').className = "px-4 py-2 rounded-full bg-[#10141A] text-white text-xs font-bold transition-all";
+      } else if (tab === 'ajustes') {
+        document.getElementById('tabAjustes').classList.remove('hidden');
+        document.getElementById('dockAjustes').className = "px-4 py-2 rounded-full bg-[#10141A] text-white text-xs font-bold transition-all";
       }
-    }
-
-    function toggleName() {
-      sayName = !sayName;
-      document.getElementById('nameStatus').textContent = sayName ? "Activado" : "Solo monto";
-      document.getElementById('nameStatus').className = sayName ? "text-[10px] font-semibold text-[#10B981]" : "text-[10px] font-semibold text-[#6B7280]";
-    }
-
-    function toggleChime() {
-      chimeActive = !chimeActive;
-      document.getElementById('chimeStatus').textContent = chimeActive ? "Activada" : "Silenciada";
-      document.getElementById('chimeStatus').className = chimeActive ? "text-[10px] font-semibold text-[#10B981]" : "text-[10px] font-semibold text-[#6B7280]";
     }
 
     function toggleVisibility() {
       visible = !visible;
       document.getElementById('mainAmount').textContent = visible ? `S/ ${total.toFixed(2)}` : "S/ ••••••";
+    }
+
+    function toggleSpeaker() {
+      // Toggle animation
     }
   </script>
 </body>

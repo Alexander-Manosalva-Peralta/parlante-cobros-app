@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Parlante Cobros</string>
-    <string name="notification_channel_name">Canal de Cobros</string>
-    <string name="notification_channel_desc">Alertas sonoras para pagos y transferencias</string>
+    <string name="app_name">punk</string>
+    <string name="notification_channel_name">Canal de Cobros punk</string>
+    <string name="notification_channel_desc">Alertas de voz para Yape y billeteras</string>
 </resources>

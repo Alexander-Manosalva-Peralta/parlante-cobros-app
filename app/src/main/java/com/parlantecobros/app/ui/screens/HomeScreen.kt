@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,13 @@ import com.parlantecobros.app.data.PaymentRepository
 import com.parlantecobros.app.model.AppSource
 import com.parlantecobros.app.model.PaymentItem
 import com.parlantecobros.app.ui.theme.*
+import java.util.Calendar
+
+enum class BottomTab(val label: String) {
+    INICIO("Caja"),
+    ANALYTICS("BI Métricas"),
+    AJUSTES("Ajustes")
+}
 
 @Composable
 fun HomeScreen(
@@ -38,6 +44,139 @@ fun HomeScreen(
     val payments by PaymentRepository.payments.collectAsState()
     val settings by PaymentRepository.settings.collectAsState()
 
+    var selectedTab by remember { mutableStateOf(BottomTab.INICIO) }
+
+    // Saludo dinámico según la hora del día
+    val greeting = remember {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        when (hour) {
+            in 5..11 -> "Buenos días ☀️"
+            in 12..18 -> "Buenas tardes ⛅"
+            else -> "Buenas noches 🌙"
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LuxuryBackground)
+    ) {
+        // Contenido según la pestaña seleccionada
+        when (selectedTab) {
+            BottomTab.INICIO -> {
+                CashierContent(
+                    greeting = greeting,
+                    payments = payments,
+                    settings = settings,
+                    isNotificationPermissionGranted = isNotificationPermissionGranted,
+                    onRequestPermission = onRequestPermission,
+                    onTestVoice = onTestVoice
+                )
+            }
+            BottomTab.ANALYTICS -> {
+                AnalyticsScreen()
+            }
+            BottomTab.AJUSTES -> {
+                SettingsContent(
+                    settings = settings,
+                    onOpenAppSettings = onOpenAppSettings,
+                    onRebindService = onRebindService,
+                    onTestVoice = onTestVoice
+                )
+            }
+        }
+
+        // Barra de Navegación Inferior Flotante (Floating Dock estilo Image 3)
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Surface(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(32.dp))
+                    .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(32.dp)),
+                color = LuxurySurface,
+                shadowElevation = 10.dp
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    DockItem(
+                        selected = selectedTab == BottomTab.INICIO,
+                        icon = Icons.Outlined.Home,
+                        label = "Caja",
+                        onClick = { selectedTab = BottomTab.INICIO }
+                    )
+
+                    DockItem(
+                        selected = selectedTab == BottomTab.ANALYTICS,
+                        icon = Icons.Outlined.BarChart,
+                        label = "BI & Métricas",
+                        onClick = { selectedTab = BottomTab.ANALYTICS }
+                    )
+
+                    DockItem(
+                        selected = selectedTab == BottomTab.AJUSTES,
+                        icon = Icons.Outlined.Tune,
+                        label = "Ajustes",
+                        onClick = { selectedTab = BottomTab.AJUSTES }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DockItem(
+    selected: Boolean,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
+    val bg = if (selected) ObsidianDark else Color.Transparent
+    val contentColor = if (selected) Color.White else TextMuted
+
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(24.dp))
+            .background(bg)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = contentColor,
+            modifier = Modifier.size(18.dp)
+        )
+        if (selected) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun CashierContent(
+    greeting: String,
+    payments: List<PaymentItem>,
+    settings: com.parlantecobros.app.model.AppSettings,
+    isNotificationPermissionGranted: Boolean,
+    onRequestPermission: () -> Unit,
+    onTestVoice: (String) -> Unit
+) {
     val totalToday = payments.sumOf { it.amount }
     val countToday = payments.size
     var isAmountVisible by remember { mutableStateOf(true) }
@@ -45,13 +184,12 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(LuxuryBackground)
             .statusBarsPadding()
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 48.dp)
+        contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp)
     ) {
-        // 1. Barra Superior Minimalista
+        // 1. Barra Superior con Logo punk y Saludo Dinámico
         item {
             Row(
                 modifier = Modifier
@@ -60,25 +198,48 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = "Mi Negocio",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = TextMuted,
-                            fontWeight = FontWeight.Medium
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Logo punk
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(ObsidianDark),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "p",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Black,
+                                color = EmeraldGreen,
+                                fontSize = 20.sp
+                            )
                         )
-                    )
-                    Text(
-                        text = "Caja de Cobros",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = TextMain,
-                            letterSpacing = (-0.5).sp
+                    }
+
+                    Column {
+                        Text(
+                            text = greeting,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = TextMuted,
+                                fontWeight = FontWeight.Medium
+                            )
                         )
-                    )
+                        Text(
+                            text = "punk cobros",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = TextMain,
+                                letterSpacing = (-0.5).sp
+                            )
+                        )
+                    }
                 }
 
-                // Live Status Pill (Estilo Neo-Fintech)
+                // Live Status Pill
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(30.dp))
@@ -109,7 +270,7 @@ fun HomeScreen(
             }
         }
 
-        // 2. Banner de Permisos de Notificaciones (si hace falta)
+        // 2. Banner de Permiso
         if (!isNotificationPermissionGranted) {
             item {
                 Card(
@@ -124,20 +285,12 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFFFEF3C7)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.NotificationsActive,
-                                contentDescription = null,
-                                tint = Color(0xFFD97706),
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Outlined.NotificationsActive,
+                            contentDescription = null,
+                            tint = Color(0xFFD97706),
+                            modifier = Modifier.size(24.dp)
+                        )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Permiso de Notificaciones",
@@ -147,7 +300,7 @@ fun HomeScreen(
                                 )
                             )
                             Text(
-                                text = "Necesario para detectar los pagos de Yape y bancos.",
+                                text = "Actívalo para que punk escuche tus cobros.",
                                 style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                             )
                         }
@@ -164,7 +317,7 @@ fun HomeScreen(
             }
         }
 
-        // 3. Tarjeta Hero Obsidian (Inspirada en las imágenes de referencia)
+        // 3. Tarjeta Hero Obsidian
         item {
             Card(
                 modifier = Modifier
@@ -191,21 +344,19 @@ fun HomeScreen(
                             )
                         )
 
-                        // Botón Ocultar/Mostrar saldo
                         IconButton(
                             onClick = { isAmountVisible = !isAmountVisible },
                             modifier = Modifier.size(28.dp)
                         ) {
                             Icon(
                                 imageVector = if (isAmountVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-                                contentDescription = "Alternar Visibilidad",
+                                contentDescription = null,
                                 tint = Color(0xFF9CA3AF),
                                 modifier = Modifier.size(18.dp)
                             )
                         }
                     }
 
-                    // Monto Principal Estilo Fintech
                     Text(
                         text = if (isAmountVisible) String.format("S/ %.2f", totalToday) else "S/ ••••••",
                         style = MaterialTheme.typography.displayMedium.copy(
@@ -215,7 +366,6 @@ fun HomeScreen(
                         )
                     )
 
-                    // Sub-estadísticas
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -228,7 +378,7 @@ fun HomeScreen(
                                 .padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = "$countToday cobros registrados",
+                                text = "$countToday cobros hoy",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     color = Color(0xFFD1D5DB),
                                     fontWeight = FontWeight.Medium
@@ -237,7 +387,7 @@ fun HomeScreen(
                         }
 
                         if (countToday > 0) {
-                            val average = totalToday / countToday
+                            val avg = totalToday / countToday
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(12.dp))
@@ -245,7 +395,7 @@ fun HomeScreen(
                                     .padding(horizontal = 10.dp, vertical = 6.dp)
                             ) {
                                 Text(
-                                    text = String.format("Promedio S/ %.2f", average),
+                                    text = String.format("Ticket prom. S/ %.2f", avg),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         color = Color(0xFFD1D5DB),
                                         fontWeight = FontWeight.Medium
@@ -257,7 +407,6 @@ fun HomeScreen(
 
                     Divider(color = ObsidianBorder, thickness = 0.8.dp)
 
-                    // Switch Principal de Altavoz
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -265,17 +414,15 @@ fun HomeScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Altavoz de Cobros",
+                                text = "Altavoz Inteligente",
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White
                                 )
                             )
                             Text(
-                                text = "Anunciar pagos entrantes por voz",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    color = Color(0xFF9CA3AF)
-                                )
+                                text = "Anunciar cobros en voz alta",
+                                style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF9CA3AF))
                             )
                         }
 
@@ -296,169 +443,18 @@ fun HomeScreen(
             }
         }
 
-        // 4. Módulo de Controles Rápidos (Bento Squircles - Estilo Image 1 y 2)
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Card 1: Probar Altavoz
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable { onTestVoice("¡Yape recibido! Pago verificado correctamente") }
-                        .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
-                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(LuxuryBackground),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.VolumeUp,
-                                contentDescription = null,
-                                tint = TextMain,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        Text(
-                            text = "Probar Voz",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = TextMain
-                            )
-                        )
-                        Text(
-                            text = "Escuchar audio",
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = TextMuted,
-                                fontSize = 11.sp
-                            )
-                        )
-                    }
-                }
-
-                // Card 2: Mencionar Nombre
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable {
-                            PaymentRepository.updateSettings { it.copy(mentionCustomerName = !it.mentionCustomerName) }
-                        }
-                        .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
-                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(LuxuryBackground),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Person,
-                                contentDescription = null,
-                                tint = if (settings.mentionCustomerName) EmeraldGreen else TextMuted,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        Text(
-                            text = "Nombre",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = TextMain
-                            )
-                        )
-                        Text(
-                            text = if (settings.mentionCustomerName) "Activado" else "Solo monto",
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = if (settings.mentionCustomerName) EmeraldGreen else TextMuted,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                    }
-                }
-
-                // Card 3: Campanilla
-                Card(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable {
-                            PaymentRepository.updateSettings { it.copy(chimeBeforeSpeaking = !it.chimeBeforeSpeaking) }
-                        }
-                        .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
-                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(LuxuryBackground),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.NotificationsNone,
-                                contentDescription = null,
-                                tint = if (settings.chimeBeforeSpeaking) EmeraldGreen else TextMuted,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        Text(
-                            text = "Campana",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = TextMain
-                            )
-                        )
-                        Text(
-                            text = if (settings.chimeBeforeSpeaking) "Activada" else "Silenciada",
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = if (settings.chimeBeforeSpeaking) EmeraldGreen else TextMuted,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                    }
-                }
-            }
-        }
-
-        // 5. Billeteras Vinculadas (Carrusel de Pills Moderno)
+        // 4. Billeteras Conectadas
         item {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    text = "Billeteras Vinculadas",
+                    text = "Billeteras Conectadas",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = TextMain
                     )
                 )
 
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     val apps = listOf(
                         Triple("Yape", YapeBrand, "Activo"),
                         Triple("Plin", PlinBrand, "Activo"),
@@ -467,7 +463,7 @@ fun HomeScreen(
                         Triple("BBVA", BbvaBrand, "Activo")
                     )
 
-                    items(apps) { (name, color, status) ->
+                    items(apps) { (name, color, _) ->
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(16.dp))
@@ -512,7 +508,7 @@ fun HomeScreen(
             }
         }
 
-        // 6. Historial de Cobros Recientes (Estilo Dribbble / Revolut)
+        // 5. Historial de Transacciones
         item {
             Row(
                 modifier = Modifier
@@ -522,7 +518,7 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Cobros Recientes",
+                    text = "Cobros de Hoy",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = TextMain
@@ -532,7 +528,7 @@ fun HomeScreen(
                 if (payments.isNotEmpty()) {
                     TextButton(onClick = { PaymentRepository.clearHistory() }) {
                         Text(
-                            text = "Limpiar historial",
+                            text = "Limpiar",
                             style = MaterialTheme.typography.labelMedium.copy(color = TextMuted)
                         )
                     }
@@ -571,14 +567,14 @@ fun HomeScreen(
                             )
                         }
                         Text(
-                            text = "A la espera de tus cobros",
+                            text = "A la espera de cobros",
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextMain
                             )
                         )
                         Text(
-                            text = "Apenas un cliente te yapee o transfiera, el parlante anunciará el monto en voz alta y se registrará aquí.",
+                            text = "Cuando te yapeen o transfieran, punk anunciará el monto por altavoz y se registrará aquí.",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = TextMuted,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -596,70 +592,170 @@ fun HomeScreen(
 }
 
 @Composable
-fun LuxuryTransactionCard(payment: PaymentItem) {
-    Card(
+fun SettingsContent(
+    settings: com.parlantecobros.app.model.AppSettings,
+    onOpenAppSettings: () -> Unit,
+    onRebindService: () -> Unit,
+    onTestVoice: (String) -> Unit
+) {
+    LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-        shape = RoundedCornerShape(20.dp)
+            .fillMaxSize()
+            .statusBarsPadding()
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-                modifier = Modifier.weight(1f)
+        item {
+            Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                Text(
+                    text = "Configuración",
+                    style = MaterialTheme.typography.bodyMedium.copy(color = TextMuted)
+                )
+                Text(
+                    text = "Ajustes de punk",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = TextMain
+                    )
+                )
+            }
+        }
+
+        // Tarjeta de Opciones de Voz
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                shape = RoundedCornerShape(24.dp)
             ) {
-                // Squircle Monograma
-                Box(
-                    modifier = Modifier
-                        .size(46.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(Color(payment.appSource.badgeColorHex).copy(alpha = 0.12f)),
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier.padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = payment.appSource.displayName.take(1),
+                        text = "Preferencias de Voz",
                         style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(payment.appSource.badgeColorHex)
-                        )
-                    )
-                }
-
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        text = payment.senderName.ifEmpty { "Cliente" },
-                        style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = TextMain
                         )
                     )
-                    Text(
-                        text = "${payment.appSource.displayName} • ${payment.formattedTime}",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = TextMuted,
-                            fontWeight = FontWeight.Medium
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Mencionar nombre de quien paga",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextMain
+                                )
+                            )
+                            Text(
+                                text = "Ej: '...de Carlos Mendoza'",
+                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                            )
+                        }
+                        Switch(
+                            checked = settings.mentionCustomerName,
+                            onCheckedChange = { checked ->
+                                PaymentRepository.updateSettings { it.copy(mentionCustomerName = checked) }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = EmeraldGreen
+                            )
                         )
-                    )
+                    }
+
+                    Divider(color = LuxuryBorder, thickness = 0.8.dp)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Campanilla previa (Chime)",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextMain
+                                )
+                            )
+                            Text(
+                                text = "Tono suave antes del anuncio",
+                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                            )
+                        }
+                        Switch(
+                            checked = settings.chimeBeforeSpeaking,
+                            onCheckedChange = { checked ->
+                                PaymentRepository.updateSettings { it.copy(chimeBeforeSpeaking = checked) }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = EmeraldGreen
+                            )
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = { onTestVoice("¡Yape recibido! Quince soles con cincuenta de Juan Pérez") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Icon(imageVector = Icons.Outlined.VolumeUp, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Probar Voz de Alerta", fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
+        }
 
-            // Monto en verde esmeralda vibrante (+ S/ 25.00)
-            Text(
-                text = "+ ${payment.formattedAmount}",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = EmeraldGreen,
-                    letterSpacing = (-0.3).sp
-                )
-            )
+        // Sistema & Segundo Plano
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Text(
+                        text = "Sistema y Batería",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = TextMain
+                        )
+                    )
+
+                    OutlinedButton(
+                        onClick = onRebindService,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text("Reconectar Servicio del Sistema", fontWeight = FontWeight.SemiBold)
+                    }
+
+                    OutlinedButton(
+                        onClick = onOpenAppSettings,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text("Ajustes del Teléfono (Inicio Automático)", fontWeight = FontWeight.SemiBold)
+                    }
+                }
+            }
         }
     }
 }

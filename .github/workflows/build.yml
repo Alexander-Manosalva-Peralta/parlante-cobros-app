@@ -42,15 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.4
-        name: "Parlante Cobros v1.0.4 (Rediseño Visual Sofisticado Neo-Fintech)"
+        tag_name: v1.0.5
+        name: "punk v1.0.5 (Nuevo Logo, Saludo Inteligente y Módulo BI)"
         body: |
-          ### Versión 1.0.4 - Nuevo Diseño Sofisticado & Profesional 🌟
+          ### punk v1.0.5 - Inteligencia de Negocio & Nueva Identidad ⚡
           
-          - **Nueva Interfaz Neo-Fintech:** Tarjeta Hero Obsidian de alta gama, tipografía premium y tarjetas redondeadas con bordes sutiles.
-          - **Controles Bento:** Ajustes rápidos de voz, campanilla y cliente en squircles táctiles.
-          - **Billeteras Vinculadas:** Carrusel moderno con estado en vivo para Yape, Plin y bancos.
-          - **Eliminación de Elementos de Prueba:** Interfaz 100% limpia para producción.
+          - **Nueva Identidad "punk":** Nombre renovado y nuevo isotipo geométrico de lujo.
+          - **Módulo BI (Business Intelligence):** Ticket promedio, horario pico de ventas, gráfico de barras y participación por billetera.
+          - **Saludo Dinámico:** Saludo adaptado según la hora local (Buenos días, Buenas tardes, Buenas noches).
+          - **Dock Flotante:** Barra de navegación inferior entre Caja, BI Métricas y Ajustes.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
