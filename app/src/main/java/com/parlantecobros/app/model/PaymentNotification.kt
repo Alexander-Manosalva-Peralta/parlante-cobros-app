@@ -58,11 +58,11 @@ data class PaymentItem(
     val spokenAmountDescription: String
         get() {
             val soles = amount.toInt()
-            val centavos = ((amount - soles) * 100).toInt()
-            return if (centavos > 0) {
-                "$soles soles con $centavos céntimos"
-            } else {
-                "$soles soles"
+            val centavos = Math.round((amount - soles) * 100).toInt()
+            return when {
+                soles == 0 && centavos > 0 -> "$centavos céntimos"
+                centavos > 0 -> "$soles soles con $centavos céntimos"
+                else -> "$soles soles"
             }
         }
 }

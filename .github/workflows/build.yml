@@ -42,16 +42,18 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.0
-        name: "Parlante Cobros v1.0.0 (APK Instalable)"
+        tag_name: v1.0.1
+        name: "Parlante Cobros v1.0.1 (Soporte Céntimos y Xiaomi)"
         body: |
-          ### ¡Tu aplicación está lista para instalar! 🚀
+          ### Versión 1.0.1 - Mejoras y Detección de Céntimos 🚀
+          
+          - Soporte para montos pequeños (10 céntimos, S/ 0.10).
+          - Monitor de Notificaciones en tiempo real en la pantalla.
+          - Soporte mejorado para segundo plano en Xiaomi / MIUI / HyperOS.
           
           **Para instalar en tu celular Android:**
-          1. Descarga el archivo adjunto `app-debug.apk` directamente desde tu teléfono.
-          2. Abre el archivo descargado y presiona **Instalar**.
-          3. Si tu celular te avisa, activa *"Permitir la instalación de fuentes desconocidas"*.
-          4. Al abrir la app, dale el permiso de **Acceso a Notificaciones** para que escuche a Yape y Plin.
+          1. Descarga el archivo `app-debug.apk`.
+          2. Presiona **Actualizar/Instalar**.
         files: app/build/outputs/apk/debug/app-debug.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

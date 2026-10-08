@@ -6,11 +6,18 @@ import java.util.regex.Pattern
 
 object PaymentParser {
 
-    // Regex para detectar montos: S/ 15.00, S/15, S/. 20.50, 15.50 soles
+    // Regex para detectar montos estándar: S/ 15.00, S/15, S/. 0.10, 0.10 soles, 10 céntimos
     private val AMOUNT_PATTERNS = listOf(
+        // S/ 15.00 o S/ 0.10 o S/10
         Pattern.compile("""(?:S\/\.?|S\s*\/\.?|Soles?)\s*([\d]+(?:[\.,][\d]{1,2})?)""", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("""([\d]+(?:[\.,][\d]{2}))\s*(?:soles|S\/\.?)""", Pattern.CASE_INSENSITIVE)
+        // 0.10 soles o 15.00 soles
+        Pattern.compile("""([\d]+(?:[\.,][\d]{1,2}))\s*(?:soles|sol|S\/\.?)""", Pattern.CASE_INSENSITIVE),
+        // "10 céntimos" o "20 centimos" -> interpretado como céntimos
+        Pattern.compile("""([\d]+)\s*c[eé]ntimos?""", Pattern.CASE_INSENSITIVE)
     )
+
+    // Fallback para Yape: busca cualquier número decimal (ej. 0.10 o 5.00)
+    private val YAPE_FALLBACK_AMOUNT = Pattern.compile("""(?:de|por|\$|S\/|\b)\s*([\d]+[\.,][\d]{2})\b""", Pattern.CASE_INSENSITIVE)
 
     // Regex para extraer el nombre del remitente
     private val SENDER_PATTERNS = listOf(
@@ -19,21 +26,23 @@ object PaymentParser {
         // "Juan Perez te envió un Yape..." o "Carlos te transfirió..."
         Pattern.compile("""^([A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,35}?)\s+te\s+(?:envi[oó]|transfiri[oó]|yape[oó])""", Pattern.CASE_INSENSITIVE),
         // "¡Yape de Juan Perez!"
-        Pattern.compile("""Yape\s+de\s+([A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,35}?)(?:!|\.|\s+por)""", Pattern.CASE_INSENSITIVE)
+        Pattern.compile("""Yape\s+de\s+([A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,35}?)(?:!|\.|\s+por)""", Pattern.CASE_INSENSITIVE),
+        // "¡Te yapearon! Juan te envió..."
+        Pattern.compile("""(?:¡?Te yapearon!?)\s+([A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,35}?)\s+te\s+envi[oó]""", Pattern.CASE_INSENSITIVE)
     )
 
-    fun parse(packageName: String, title: String, text: String, subText: String = ""): PaymentItem? {
-        val fullContent = "$title. $text. $subText".trim()
+    fun parse(packageName: String, title: String, text: String, subText: String = "", ticker: String = ""): PaymentItem? {
+        val fullContent = "$title. $text. $subText. $ticker".trim()
 
         // 1. Detectar si el texto o paquete pertenece a cobros/pagos
         val appSource = AppSource.fromPackageOrText(packageName, fullContent)
 
-        // Verificamos si parece una notificación de ingreso/cobro (no un débito o cobro que el usuario hizo a otro)
+        // Verificamos si parece una notificación de ingreso/cobro
         val isPaymentReceived = isIncomingPayment(fullContent, packageName)
         if (!isPaymentReceived) return null
 
         // 2. Extraer el monto
-        val amount = extractAmount(fullContent) ?: return null
+        val amount = extractAmount(fullContent, packageName) ?: return null
         if (amount <= 0.0) return null
 
         // 3. Extraer el nombre de quien envía
@@ -57,8 +66,10 @@ object PaymentParser {
                 lower.contains("tu pago de") ||
                 lower.contains("compra aprobada") ||
                 lower.contains("promoción") ||
+                lower.contains("promocion") ||
                 lower.contains("descuento") ||
-                lower.contains("código de aprobación")
+                lower.contains("código de aprobación") ||
+                lower.contains("enviaste")
 
         if (isOutgoing) return false
 
@@ -72,22 +83,43 @@ object PaymentParser {
 
         val hasIncomingKeyword = incomingKeywords.any { lower.contains(it) }
 
-        // Si es la app de Yape directamente, casi todas las notificaciones recibidas son yapeos
-        val isYapeApp = pkg.contains("yape") || lower.contains("yape")
+        // Si la notificación viene de la app de Yape (com.bcp.innovacxion.yapeapp)
+        val isYapeApp = pkg.contains("yape") || pkg.contains("innovacxion") || lower.contains("yape")
 
         return hasIncomingKeyword || isYapeApp
     }
 
-    private fun extractAmount(text: String): Double? {
+    private fun extractAmount(text: String, pkg: String): Double? {
+        // Chequeo si dice específicamente "céntimos" (ej. "10 céntimos")
+        val centMatcher = Pattern.compile("""([\d]+)\s*c[eé]ntimos?""", Pattern.CASE_INSENSITIVE).matcher(text)
+        if (centMatcher.find()) {
+            val cents = centMatcher.group(1)?.toDoubleOrNull()
+            if (cents != null && cents > 0) {
+                return cents / 100.0
+            }
+        }
+
         for (pattern in AMOUNT_PATTERNS) {
             val matcher = pattern.matcher(text)
             if (matcher.find()) {
                 val rawValue = matcher.group(1)?.replace(",", ".") ?: continue
                 try {
-                    return rawValue.toDouble()
+                    val parsed = rawValue.toDouble()
+                    if (parsed > 0) return parsed
                 } catch (_: Exception) {}
             }
         }
+
+        // Si es de la app Yape directamente, intentamos fallback con cualquier número decimal
+        if (pkg.contains("yape") || pkg.contains("innovacxion") || text.contains("yape", ignoreCase = true)) {
+            val fallbackMatcher = YAPE_FALLBACK_AMOUNT.matcher(text)
+            if (fallbackMatcher.find()) {
+                val rawValue = fallbackMatcher.group(1)?.replace(",", ".") ?: ""
+                val parsed = rawValue.toDoubleOrNull()
+                if (parsed != null && parsed > 0) return parsed
+            }
+        }
+
         return null
     }
 
@@ -103,7 +135,6 @@ object PaymentParser {
             }
         }
 
-        // Si el título parece un nombre de persona (ej. "Carlos Rodriguez")
         val cleanTitle = cleanSenderName(title)
         if (cleanTitle.length in 3..30 && !cleanTitle.contains("Yape", ignoreCase = true) && !cleanTitle.contains("Plin", ignoreCase = true)) {
             return cleanTitle

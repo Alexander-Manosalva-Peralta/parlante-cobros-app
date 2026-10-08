@@ -19,7 +19,14 @@ class CobrosNotificationListener : NotificationListenerService() {
         super.onCreate()
         speechManager = SpeechManager(applicationContext)
         startForegroundNotification()
+        PaymentRepository.recordRawNotification("Servicio iniciado en segundo plano.")
         Log.d(TAG, "CobrosNotificationListener iniciado y listo.")
+    }
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        PaymentRepository.recordRawNotification("Conectado al sistema de notificaciones de Android.")
+        Log.d(TAG, "onListenerConnected: Conectado a Android")
     }
 
     override fun onDestroy() {
@@ -32,21 +39,32 @@ class CobrosNotificationListener : NotificationListenerService() {
         if (sbn == null) return
 
         val packageName = sbn.packageName ?: ""
-        val extras = sbn.notification.extras ?: return
+        // Ignorar nuestras propias notificaciones del sistema
+        if (packageName == applicationContext.packageName) return
+
+        val notification = sbn.notification ?: return
+        val extras = notification.extras ?: return
 
         val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
         val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: ""
         val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString() ?: ""
         val subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString() ?: ""
+        val ticker = notification.tickerText?.toString() ?: ""
 
         val combinedContent = if (bigText.isNotEmpty()) bigText else text
+
+        // Registrar para depuración en tiempo real en la pantalla
+        val rawPreview = "[$packageName] $title: $combinedContent"
+        PaymentRepository.recordRawNotification(rawPreview)
+        Log.d(TAG, "Notificación detectada: $rawPreview")
 
         // Intentar parsear el cobro
         val payment = PaymentParser.parse(
             packageName = packageName,
             title = title,
             text = combinedContent,
-            subText = subText
+            subText = subText,
+            ticker = ticker
         ) ?: return
 
         val settings = PaymentRepository.settings.value
@@ -64,10 +82,6 @@ class CobrosNotificationListener : NotificationListenerService() {
             Log.d(TAG, "¡Cobro detectado con éxito! ${payment.appSource.displayName} - S/ ${payment.amount}")
             speechManager.speakPayment(payment, settings)
         }
-    }
-
-    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
-        super.onNotificationRemoved(sbn)
     }
 
     private fun startForegroundNotification() {
@@ -88,13 +102,12 @@ class CobrosNotificationListener : NotificationListenerService() {
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Parlante Cobros Activo")
-            .setContentText("Escuchando notificaciones de Yape, Plin y bancos...")
+            .setContentText("Escuchando cobros de Yape, Plin y bancos...")
             .setSmallIcon(android.R.drawable.ic_lock_silent_mode_off)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
-        // ID persistente
         startForeground(1001, notification)
     }
 

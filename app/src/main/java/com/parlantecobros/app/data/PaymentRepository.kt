@@ -16,6 +16,13 @@ object PaymentRepository {
     private val _settings = MutableStateFlow(AppSettings())
     val settings: StateFlow<AppSettings> = _settings.asStateFlow()
 
+    private val _lastCapturedNotification = MutableStateFlow<String>("A la espera de notificaciones...")
+    val lastCapturedNotification: StateFlow<String> = _lastCapturedNotification.asStateFlow()
+
+    fun recordRawNotification(info: String) {
+        _lastCapturedNotification.value = info
+    }
+
     // Cache para evitar notificaciones duplicadas (dentro de 10 segundos)
     private val recentDeduplicationCache = mutableMapOf<String, Long>()
 

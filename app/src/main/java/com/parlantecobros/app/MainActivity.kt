@@ -3,8 +3,11 @@ package com.parlantecobros.app
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.service.notification.NotificationListenerService
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
@@ -28,6 +31,8 @@ class MainActivity : ComponentActivity() {
                 HomeScreen(
                     isNotificationPermissionGranted = isListenerEnabled,
                     onRequestPermission = { openNotificationListenerSettings() },
+                    onOpenAppSettings = { openAppSettings() },
+                    onRebindService = { rebindNotificationListener() },
                     onTestVoice = { sampleText -> speechManager.testVoice(sampleText) }
                 )
             }
@@ -37,6 +42,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         checkNotificationListenerPermission()
+        rebindNotificationListener()
     }
 
     override fun onDestroy() {
@@ -50,13 +56,30 @@ class MainActivity : ComponentActivity() {
         isListenerEnabled = flat != null && flat.contains(packageName)
     }
 
+    private fun rebindNotificationListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isListenerEnabled) {
+            try {
+                val component = ComponentName(this, CobrosNotificationListener::class.java)
+                NotificationListenerService.requestRebind(component)
+            } catch (_: Exception) {}
+        }
+    }
+
     private fun openNotificationListenerSettings() {
         try {
             val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             startActivity(intent)
         } catch (_: Exception) {
-            val intent = Intent(Settings.ACTION_SETTINGS)
-            startActivity(intent)
+            openAppSettings()
         }
+    }
+
+    private fun openAppSettings() {
+        try {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
+        } catch (_: Exception) {}
     }
 }

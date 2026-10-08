@@ -32,10 +32,13 @@ import com.parlantecobros.app.ui.theme.*
 fun HomeScreen(
     isNotificationPermissionGranted: Boolean,
     onRequestPermission: () -> Unit,
+    onOpenAppSettings: () -> Unit,
+    onRebindService: () -> Unit,
     onTestVoice: (String) -> Unit
 ) {
     val payments by PaymentRepository.payments.collectAsState()
     val settings by PaymentRepository.settings.collectAsState()
+    val lastCapturedNotification by PaymentRepository.lastCapturedNotification.collectAsState()
 
     val totalToday = payments.sumOf { it.amount }
     val countToday = payments.size
@@ -222,6 +225,63 @@ fun HomeScreen(
                                 uncheckedTrackColor = AppleBorder
                             )
                         )
+                    }
+                }
+            }
+        }
+
+        // 3.5. Diagnóstico de Notificaciones en Vivo y Xiaomi
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, AppleBorder, RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = AppleCard),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Monitor de Notificaciones",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = AppleTextPrimary
+                            )
+                        )
+                        TextButton(onClick = onRebindService) {
+                            Text("Reconectar", color = AppleBlue, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(AppleBackground)
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = lastCapturedNotification,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = AppleTextPrimary,
+                                fontWeight = FontWeight.Medium
+                            )
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = onOpenAppSettings,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Ajustes de la App (Inicio Automático Xiaomi)", color = AppleTextPrimary, fontSize = 12.sp)
                     }
                 }
             }
