@@ -42,15 +42,13 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.2
-        name: "Parlante Cobros v1.0.2 (Solución Crítica Android 14 y Volumen)"
+        tag_name: v1.0.3
+        name: "Parlante Cobros v1.0.3 (Filtro Estricto de Privacidad - Solo Bancos y Yape)"
         body: |
-          ### Versión 1.0.2 - Solución Crítica de Enlace y Volumen 🚀
+          ### Versión 1.0.3 - Filtro Exclusivo Financiero 🛡️
           
-          - Solucionado error en segundo plano de Android 14 que desvinculaba el servicio.
-          - Volumen automático: el altavoz se amplifica automáticamente para que la voz se escuche clara.
-          - Registro de diagnóstico en tiempo real en la pantalla.
-          - Botón "Reconectar y Probar" con sonido de prueba inmediato.
+          - **Privacidad Total:** WhatsApp, Telegram, redes sociales, llamadas y mensajes personales son bloqueados al 100%.
+          - **Solo Pagos:** El monitor y el altavoz reaccionan ÚNICAMENTE ante Yape, Plin, BCP, Interbank, BBVA, Scotiabank y billeteras autorizadas.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
