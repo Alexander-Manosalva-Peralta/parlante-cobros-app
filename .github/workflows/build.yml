@@ -42,13 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.3
-        name: "Parlante Cobros v1.0.3 (Filtro Estricto de Privacidad - Solo Bancos y Yape)"
+        tag_name: v1.0.4
+        name: "Parlante Cobros v1.0.4 (Rediseño Visual Sofisticado Neo-Fintech)"
         body: |
-          ### Versión 1.0.3 - Filtro Exclusivo Financiero 🛡️
+          ### Versión 1.0.4 - Nuevo Diseño Sofisticado & Profesional 🌟
           
-          - **Privacidad Total:** WhatsApp, Telegram, redes sociales, llamadas y mensajes personales son bloqueados al 100%.
-          - **Solo Pagos:** El monitor y el altavoz reaccionan ÚNICAMENTE ante Yape, Plin, BCP, Interbank, BBVA, Scotiabank y billeteras autorizadas.
+          - **Nueva Interfaz Neo-Fintech:** Tarjeta Hero Obsidian de alta gama, tipografía premium y tarjetas redondeadas con bordes sutiles.
+          - **Controles Bento:** Ajustes rápidos de voz, campanilla y cliente en squircles táctiles.
+          - **Billeteras Vinculadas:** Carrusel moderno con estado en vivo para Yape, Plin y bancos.
+          - **Eliminación de Elementos de Prueba:** Interfaz 100% limpia para producción.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

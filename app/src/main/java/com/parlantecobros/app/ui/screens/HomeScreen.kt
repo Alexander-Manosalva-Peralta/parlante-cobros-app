@@ -1,23 +1,23 @@
 package com.parlantecobros.app.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.NotificationsActive
-import androidx.compose.material.icons.outlined.VolumeUp
-import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import com.parlantecobros.app.data.PaymentRepository
 import com.parlantecobros.app.model.AppSource
 import com.parlantecobros.app.model.PaymentItem
-import com.parlantecobros.app.model.SpeechTemplate
 import com.parlantecobros.app.ui.theme.*
 
 @Composable
@@ -38,136 +37,145 @@ fun HomeScreen(
 ) {
     val payments by PaymentRepository.payments.collectAsState()
     val settings by PaymentRepository.settings.collectAsState()
-    val lastCapturedNotification by PaymentRepository.lastCapturedNotification.collectAsState()
 
     val totalToday = payments.sumOf { it.amount }
     val countToday = payments.size
+    var isAmountVisible by remember { mutableStateOf(true) }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppleBackground)
+            .background(LuxuryBackground)
             .statusBarsPadding()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 40.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 48.dp)
     ) {
-        // 1. Apple Header Minimalista
+        // 1. Barra Superior Minimalista
         item {
-            Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Parlante Cobros",
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = AppleTextPrimary,
-                                letterSpacing = (-0.5).sp
-                            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Mi Negocio",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = TextMuted,
+                            fontWeight = FontWeight.Medium
                         )
-                        Text(
-                            text = "Avisos de voz para Yape, Plin y bancos",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = AppleTextSecondary
-                            )
+                    )
+                    Text(
+                        text = "Caja de Cobros",
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = TextMain,
+                            letterSpacing = (-0.5).sp
                         )
-                    }
+                    )
+                }
 
-                    // Status Pill
-                    Row(
+                // Live Status Pill (Estilo Neo-Fintech)
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(if (settings.speakerEnabled) EmeraldGlow else Color(0xFFE5E7EB))
+                        .border(
+                            1.dp,
+                            if (settings.speakerEnabled) EmeraldGreen.copy(alpha = 0.3f) else Color.Transparent,
+                            RoundedCornerShape(30.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(7.dp)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(if (settings.speakerEnabled) AppleGreen.copy(alpha = 0.12f) else AppleTextSecondary.copy(alpha = 0.12f))
-                            .padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(if (settings.speakerEnabled) AppleGreen else AppleTextSecondary)
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(if (settings.speakerEnabled) EmeraldGreen else TextMuted)
+                    )
+                    Text(
+                        text = if (settings.speakerEnabled) "En Escucha" else "En Pausa",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (settings.speakerEnabled) EmeraldGreen else TextMuted
                         )
-                        Text(
-                            text = if (settings.speakerEnabled) "Activo" else "Pausado",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = if (settings.speakerEnabled) AppleGreen else AppleTextSecondary
-                            )
-                        )
-                    }
+                    )
                 }
             }
         }
 
-        // 2. Banner de Permisos (si no está activo)
+        // 2. Banner de Permisos de Notificaciones (si hace falta)
         if (!isNotificationPermissionGranted) {
             item {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, AppleOrange.copy(alpha = 0.3f), RoundedCornerShape(18.dp)),
-                    colors = CardDefaults.cardColors(containerColor = AppleCard),
-                    shape = RoundedCornerShape(18.dp)
+                        .border(1.dp, Color(0xFFFED7AA), RoundedCornerShape(22.dp)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFBEB)),
+                    shape = RoundedCornerShape(22.dp)
                 ) {
                     Row(
                         modifier = Modifier.padding(18.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Warning,
-                            contentDescription = "Alerta",
-                            tint = AppleOrange,
-                            modifier = Modifier.size(28.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFFFEF3C7)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.NotificationsActive,
+                                contentDescription = null,
+                                tint = Color(0xFFD97706),
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Permiso de notificaciones necesario",
+                                text = "Permiso de Notificaciones",
                                 style = MaterialTheme.typography.titleSmall.copy(
                                     fontWeight = FontWeight.SemiBold,
-                                    color = AppleTextPrimary
+                                    color = TextMain
                                 )
                             )
                             Text(
-                                text = "Permite que la app lea las notificaciones de Yape y bancos para hablar.",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    color = AppleTextSecondary
-                                )
+                                text = "Necesario para detectar los pagos de Yape y bancos.",
+                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                             )
                         }
                         Button(
                             onClick = onRequestPermission,
-                            colors = ButtonDefaults.buttonColors(containerColor = AppleBlue),
-                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = TextMain),
+                            shape = RoundedCornerShape(14.dp),
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                         ) {
-                            Text(
-                                text = "Activar",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
-                            )
+                            Text("Activar", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold))
                         }
                     }
                 }
             }
         }
 
-        // 3. Tarjeta Hero de Cobros del Día (Estilo Apple KPI)
+        // 3. Tarjeta Hero Obsidian (Inspirada en las imágenes de referencia)
         item {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, AppleBorder, RoundedCornerShape(22.dp)),
-                colors = CardDefaults.cardColors(containerColor = AppleCard),
-                shape = RoundedCornerShape(22.dp)
+                    .border(1.dp, ObsidianBorder, RoundedCornerShape(28.dp)),
+                colors = CardDefaults.cardColors(containerColor = ObsidianDark),
+                shape = RoundedCornerShape(28.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.padding(26.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -176,43 +184,101 @@ fun HomeScreen(
                     ) {
                         Text(
                             text = "TOTAL RECAUDADO HOY",
-                            style = MaterialTheme.typography.labelMedium.copy(
+                            style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
-                                color = AppleTextSecondary,
-                                letterSpacing = 1.sp
+                                color = Color(0xFF9CA3AF),
+                                letterSpacing = 1.2.sp
                             )
                         )
-                        Text(
-                            text = "$countToday cobros",
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                color = AppleTextSecondary
+
+                        // Botón Ocultar/Mostrar saldo
+                        IconButton(
+                            onClick = { isAmountVisible = !isAmountVisible },
+                            modifier = Modifier.size(28.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isAmountVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                contentDescription = "Alternar Visibilidad",
+                                tint = Color(0xFF9CA3AF),
+                                modifier = Modifier.size(18.dp)
                             )
-                        )
+                        }
                     }
 
+                    // Monto Principal Estilo Fintech
                     Text(
-                        text = String.format("S/ %.2f", totalToday),
-                        style = MaterialTheme.typography.displaySmall.copy(
+                        text = if (isAmountVisible) String.format("S/ %.2f", totalToday) else "S/ ••••••",
+                        style = MaterialTheme.typography.displayMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = AppleTextPrimary,
-                            letterSpacing = (-1).sp
+                            color = Color.White,
+                            letterSpacing = (-1.2).sp
                         )
                     )
 
-                    Divider(color = AppleBorder, thickness = 0.8.dp)
+                    // Sub-estadísticas
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFF1F242C))
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = "$countToday cobros registrados",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = Color(0xFFD1D5DB),
+                                    fontWeight = FontWeight.Medium
+                                )
+                            )
+                        }
 
+                        if (countToday > 0) {
+                            val average = totalToday / countToday
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFF1F242C))
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = String.format("Promedio S/ %.2f", average),
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = Color(0xFFD1D5DB),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    Divider(color = ObsidianBorder, thickness = 0.8.dp)
+
+                    // Switch Principal de Altavoz
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Voz por altavoz",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.Medium,
-                                color = AppleTextPrimary
+                        Column {
+                            Text(
+                                text = "Altavoz de Cobros",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White
+                                )
                             )
-                        )
+                            Text(
+                                text = "Anunciar pagos entrantes por voz",
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = Color(0xFF9CA3AF)
+                                )
+                            )
+                        }
+
                         Switch(
                             checked = settings.speakerEnabled,
                             onCheckedChange = { checked ->
@@ -220,9 +286,9 @@ fun HomeScreen(
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.White,
-                                checkedTrackColor = AppleGreen,
-                                uncheckedThumbColor = Color.White,
-                                uncheckedTrackColor = AppleBorder
+                                checkedTrackColor = EmeraldGreen,
+                                uncheckedThumbColor = Color(0xFF9CA3AF),
+                                uncheckedTrackColor = Color(0xFF262C36)
                             )
                         )
                     }
@@ -230,271 +296,223 @@ fun HomeScreen(
             }
         }
 
-        // 3.5. Diagnóstico de Notificaciones en Vivo y Xiaomi
+        // 4. Módulo de Controles Rápidos (Bento Squircles - Estilo Image 1 y 2)
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, AppleBorder, RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = AppleCard),
-                shape = RoundedCornerShape(20.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                // Card 1: Probar Altavoz
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable { onTestVoice("¡Yape recibido! Pago verificado correctamente") }
+                        .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
+                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(LuxuryBackground),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.VolumeUp,
+                                contentDescription = null,
+                                tint = TextMain,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                         Text(
-                            text = "Monitor de Notificaciones",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = AppleTextPrimary
+                            text = "Probar Voz",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = TextMain
                             )
                         )
-                        TextButton(onClick = onRebindService) {
-                            Text("Reconectar y Probar", color = AppleBlue, fontWeight = FontWeight.Bold)
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(AppleBackground)
-                            .padding(12.dp)
-                    ) {
                         Text(
-                            text = lastCapturedNotification,
+                            text = "Escuchar audio",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = AppleTextPrimary,
-                                fontWeight = FontWeight.Medium
+                                color = TextMuted,
+                                fontSize = 11.sp
                             )
                         )
-                    }
-
-                    OutlinedButton(
-                        onClick = onOpenAppSettings,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Ajustes de la App (Inicio Automático Xiaomi)", color = AppleTextPrimary, fontSize = 12.sp)
                     }
                 }
-            }
-        }
 
-        // 4. Panel de Configuración Rápida
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, AppleBorder, RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = AppleCard),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                // Card 2: Mencionar Nombre
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable {
+                            PaymentRepository.updateSettings { it.copy(mentionCustomerName = !it.mentionCustomerName) }
+                        }
+                        .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
+                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text(
-                        text = "Preferencias de Voz",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = AppleTextPrimary
-                        )
-                    )
-
-                    // Switch mención de nombre
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column {
-                            Text(
-                                text = "Mencionar nombre del cliente",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = AppleTextPrimary
-                                )
-                            )
-                            Text(
-                                text = "Ej: '...de Carlos Pérez'",
-                                style = MaterialTheme.typography.bodySmall.copy(color = AppleTextSecondary)
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(LuxuryBackground),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Person,
+                                contentDescription = null,
+                                tint = if (settings.mentionCustomerName) EmeraldGreen else TextMuted,
+                                modifier = Modifier.size(18.dp)
                             )
                         }
-                        Switch(
-                            checked = settings.mentionCustomerName,
-                            onCheckedChange = { checked ->
-                                PaymentRepository.updateSettings { it.copy(mentionCustomerName = checked) }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = AppleBlue
-                            )
-                        )
-                    }
-
-                    Divider(color = AppleBorder, thickness = 0.8.dp)
-
-                    // Campanilla previa
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Campanilla previa (Ding)",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = AppleTextPrimary
-                                )
-                            )
-                            Text(
-                                text = "Emite un tono antes de hablar",
-                                style = MaterialTheme.typography.bodySmall.copy(color = AppleTextSecondary)
-                            )
-                        }
-                        Switch(
-                            checked = settings.chimeBeforeSpeaking,
-                            onCheckedChange = { checked ->
-                                PaymentRepository.updateSettings { it.copy(chimeBeforeSpeaking = checked) }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = AppleBlue
-                            )
-                        )
-                    }
-
-                    // Botón probar voz
-                    OutlinedButton(
-                        onClick = {
-                            onTestVoice("¡Yape recibido! Quince soles con cincuenta de Juan Pérez")
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = AppleBlue
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.VolumeUp,
-                            contentDescription = "Probar",
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Probar Voz de Alerta",
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
+                            text = "Nombre",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = TextMain
+                            )
+                        )
+                        Text(
+                            text = if (settings.mentionCustomerName) "Activado" else "Solo monto",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = if (settings.mentionCustomerName) EmeraldGreen else TextMuted,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
                 }
-            }
-        }
 
-        // 5. Simulador Rápido de Pruebas
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, AppleBorder, RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = AppleCard),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                // Card 3: Campanilla
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable {
+                            PaymentRepository.updateSettings { it.copy(chimeBeforeSpeaking = !it.chimeBeforeSpeaking) }
+                        }
+                        .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
+                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text(
-                        text = "Simulador de Cobro Inmediato",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = AppleTextPrimary
-                        )
-                    )
-                    Text(
-                        text = "Toca para simular que un cliente te paga y verificar el parlante:",
-                        style = MaterialTheme.typography.bodySmall.copy(color = AppleTextSecondary)
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        FilledTonalButton(
-                            onClick = {
-                                val item = PaymentItem(
-                                    appSource = AppSource.YAPE,
-                                    senderName = "Carlos Mendoza",
-                                    amount = 25.00,
-                                    rawText = "Te llegó un Yape de Carlos Mendoza por S/ 25.00"
-                                )
-                                PaymentRepository.addPayment(item)
-                                onTestVoice("¡Yape recibido! Veinticinco soles de Carlos Mendoza")
-                            },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = YapeColor.copy(alpha = 0.12f),
-                                contentColor = YapeColor
-                            )
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(LuxuryBackground),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text("Yape S/ 25", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Icon(
+                                imageVector = Icons.Outlined.NotificationsNone,
+                                contentDescription = null,
+                                tint = if (settings.chimeBeforeSpeaking) EmeraldGreen else TextMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
-
-                        FilledTonalButton(
-                            onClick = {
-                                val item = PaymentItem(
-                                    appSource = AppSource.PLIN,
-                                    senderName = "María Rojas",
-                                    amount = 18.50,
-                                    rawText = "María Rojas te transfirió S/ 18.50 por Plin"
-                                )
-                                PaymentRepository.addPayment(item)
-                                onTestVoice("¡Plin recibido! Dieciocho soles con cincuenta de María Rojas")
-                            },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = PlinColor.copy(alpha = 0.12f),
-                                contentColor = PlinColor
+                        Text(
+                            text = "Campana",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = TextMain
                             )
-                        ) {
-                            Text("Plin S/ 18.50", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                        }
-
-                        FilledTonalButton(
-                            onClick = {
-                                val item = PaymentItem(
-                                    appSource = AppSource.BCP,
-                                    senderName = "Luis Gomez",
-                                    amount = 120.00,
-                                    rawText = "Abono BCP: S/ 120.00 de Luis Gomez"
-                                )
-                                PaymentRepository.addPayment(item)
-                                onTestVoice("¡BCP recibido! Ciento veinte soles de Luis Gomez")
-                            },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = BcpColor.copy(alpha = 0.12f),
-                                contentColor = BcpColor
+                        )
+                        Text(
+                            text = if (settings.chimeBeforeSpeaking) "Activada" else "Silenciada",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = if (settings.chimeBeforeSpeaking) EmeraldGreen else TextMuted,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold
                             )
+                        )
+                    }
+                }
+            }
+        }
+
+        // 5. Billeteras Vinculadas (Carrusel de Pills Moderno)
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    text = "Billeteras Vinculadas",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = TextMain
+                    )
+                )
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    val apps = listOf(
+                        Triple("Yape", YapeBrand, "Activo"),
+                        Triple("Plin", PlinBrand, "Activo"),
+                        Triple("BCP", BcpBrand, "Activo"),
+                        Triple("Interbank", InterbankBrand, "Activo"),
+                        Triple("BBVA", BbvaBrand, "Activo")
+                    )
+
+                    items(apps) { (name, color, status) ->
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(LuxurySurface)
+                                .border(1.dp, LuxuryBorder, RoundedCornerShape(16.dp))
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text("BCP S/ 120", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Box(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .background(color.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = name.take(1),
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = color,
+                                        fontSize = 11.sp
+                                    )
+                                )
+                            }
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextMain
+                                )
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(EmeraldGreen)
+                            )
                         }
                     }
                 }
             }
         }
 
-        // 6. Historial de Cobros Recientes
+        // 6. Historial de Cobros Recientes (Estilo Dribbble / Revolut)
         item {
             Row(
                 modifier = Modifier
@@ -504,18 +522,18 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Historial Reciente",
+                    text = "Cobros Recientes",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = AppleTextPrimary
+                        color = TextMain
                     )
                 )
 
                 if (payments.isNotEmpty()) {
                     TextButton(onClick = { PaymentRepository.clearHistory() }) {
                         Text(
-                            text = "Limpiar",
-                            style = MaterialTheme.typography.labelMedium.copy(color = AppleTextSecondary)
+                            text = "Limpiar historial",
+                            style = MaterialTheme.typography.labelMedium.copy(color = TextMuted)
                         )
                     }
                 }
@@ -527,34 +545,43 @@ fun HomeScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, AppleBorder, RoundedCornerShape(18.dp)),
-                    colors = CardDefaults.cardColors(containerColor = AppleCard),
-                    shape = RoundedCornerShape(18.dp)
+                        .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
+                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 36.dp, horizontal = 20.dp),
+                            .padding(vertical = 40.dp, horizontal = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.NotificationsActive,
-                            contentDescription = null,
-                            tint = AppleTextSecondary.copy(alpha = 0.5f),
-                            modifier = Modifier.size(36.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(LuxuryBackground),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.AccountBalanceWallet,
+                                contentDescription = null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
                         Text(
-                            text = "Aún no hay cobros registrados hoy",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontWeight = FontWeight.Medium,
-                                color = AppleTextSecondary
+                            text = "A la espera de tus cobros",
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = TextMain
                             )
                         )
                         Text(
-                            text = "Cuando recibas un Yape, Plin o abono, sonará aquí al instante.",
+                            text = "Apenas un cliente te yapee o transfiera, el parlante anunciará el monto en voz alta y se registrará aquí.",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = AppleTextTertiary
+                                color = TextMuted,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
                         )
                     }
@@ -562,25 +589,25 @@ fun HomeScreen(
             }
         } else {
             items(payments, key = { it.id }) { item ->
-                PaymentCard(payment = item)
+                LuxuryTransactionCard(payment = item)
             }
         }
     }
 }
 
 @Composable
-fun PaymentCard(payment: PaymentItem) {
+fun LuxuryTransactionCard(payment: PaymentItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, AppleBorder, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = AppleCard),
-        shape = RoundedCornerShape(16.dp)
+            .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(18.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -589,11 +616,11 @@ fun PaymentCard(payment: PaymentItem) {
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                // Badge con color de app
+                // Squircle Monograma
                 Box(
                     modifier = Modifier
-                        .size(42.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .size(46.dp)
+                        .clip(RoundedCornerShape(14.dp))
                         .background(Color(payment.appSource.badgeColorHex).copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -606,29 +633,31 @@ fun PaymentCard(payment: PaymentItem) {
                     )
                 }
 
-                Column {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
                         text = payment.senderName.ifEmpty { "Cliente" },
                         style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = AppleTextPrimary
+                            fontWeight = FontWeight.Bold,
+                            color = TextMain
                         )
                     )
                     Text(
                         text = "${payment.appSource.displayName} • ${payment.formattedTime}",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = AppleTextSecondary
+                            color = TextMuted,
+                            fontWeight = FontWeight.Medium
                         )
                     )
                 }
             }
 
-            // Monto en grande y limpio
+            // Monto en verde esmeralda vibrante (+ S/ 25.00)
             Text(
-                text = payment.formattedAmount,
-                style = MaterialTheme.typography.titleLarge.copy(
+                text = "+ ${payment.formattedAmount}",
+                style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = AppleTextPrimary
+                    color = EmeraldGreen,
+                    letterSpacing = (-0.3).sp
                 )
             )
         }
