@@ -759,3 +759,71 @@ fun SettingsContent(
         }
     }
 }
+
+@Composable
+fun LuxuryTransactionCard(payment: PaymentItem) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, LuxuryBorder, RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(payment.appSource.badgeColorHex).copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = payment.appSource.displayName.take(1),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color(payment.appSource.badgeColorHex)
+                        )
+                    )
+                }
+
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = payment.senderName.ifEmpty { "Cliente" },
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = TextMain
+                        )
+                    )
+                    Text(
+                        text = "${payment.appSource.displayName} • ${payment.formattedTime}",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = TextMuted,
+                            fontWeight = FontWeight.Medium
+                        )
+                    )
+                }
+            }
+
+            Text(
+                text = "+ ${payment.formattedAmount}",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = EmeraldGreen,
+                    letterSpacing = (-0.3).sp
+                )
+            )
+        }
+    }
+}
+
