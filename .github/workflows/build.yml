@@ -42,15 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.5
-        name: "punk v1.0.5 (Nuevo Logo, Saludo Inteligente y Módulo BI)"
+        tag_name: v1.0.6
+        name: "punk v1.0.6 (Logo Oficial, Voz Natural y Cero Emojis)"
         body: |
-          ### punk v1.0.5 - Inteligencia de Negocio & Nueva Identidad ⚡
+          ### punk v1.0.6 - Logo Oficial, Voz Natural y Cero Emojis
           
-          - **Nueva Identidad "punk":** Nombre renovado y nuevo isotipo geométrico de lujo.
-          - **Módulo BI (Business Intelligence):** Ticket promedio, horario pico de ventas, gráfico de barras y participación por billetera.
-          - **Saludo Dinámico:** Saludo adaptado según la hora local (Buenos días, Buenas tardes, Buenas noches).
-          - **Dock Flotante:** Barra de navegación inferior entre Caja, BI Métricas y Ajustes.
+          - **Logo Oficial:** Integrado el logotipo oficial "punk" tanto en el icono de la aplicación como en la cabecera.
+          - **Voz Humana y Natural:** Algoritmo de selección de voces neuronales / WaveNet de Google con cadencia humana, pronunciación nativa de soles y pausas naturales.
+          - **Diseño Sobrio y Profesional:** Eliminación total de emojis en toda la interfaz para un acabado de nivel corporativo.
+          - **Módulo BI:** Métricas en tiempo real, ticket promedio, horas pico y desglose por billetera.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

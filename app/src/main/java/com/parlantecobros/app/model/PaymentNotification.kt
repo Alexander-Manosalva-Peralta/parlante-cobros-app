@@ -60,7 +60,10 @@ data class PaymentItem(
             val soles = amount.toInt()
             val centavos = Math.round((amount - soles) * 100).toInt()
             return when {
-                soles == 0 && centavos > 0 -> "$centavos céntimos"
+                soles == 0 && centavos > 0 -> if (centavos == 1) "un céntimo" else "$centavos céntimos"
+                soles == 1 && centavos == 0 -> "un sol"
+                soles == 1 && centavos > 0 -> if (centavos == 1) "un sol con un céntimo" else "un sol con $centavos céntimos"
+                centavos == 1 -> "$soles soles con un céntimo"
                 centavos > 0 -> "$soles soles con $centavos céntimos"
                 else -> "$soles soles"
             }

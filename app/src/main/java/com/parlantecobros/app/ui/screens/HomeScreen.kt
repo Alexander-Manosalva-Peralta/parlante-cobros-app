@@ -1,6 +1,7 @@
 package com.parlantecobros.app.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,9 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.parlantecobros.app.R
 import com.parlantecobros.app.data.PaymentRepository
 import com.parlantecobros.app.model.AppSource
 import com.parlantecobros.app.model.PaymentItem
@@ -46,13 +50,13 @@ fun HomeScreen(
 
     var selectedTab by remember { mutableStateOf(BottomTab.INICIO) }
 
-    // Saludo dinámico según la hora del día
+    // Saludo dinámico según la hora del día (sin emojis)
     val greeting = remember {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         when (hour) {
-            in 5..11 -> "Buenos días ☀️"
-            in 12..18 -> "Buenas tardes ⛅"
-            else -> "Buenas noches 🌙"
+            in 5..11 -> "Buenos días"
+            in 12..18 -> "Buenas tardes"
+            else -> "Buenas noches"
         }
     }
 
@@ -202,23 +206,16 @@ fun CashierContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    // Logo punk
-                    Box(
+                    // Logo punk oficial
+                    Image(
+                        painter = painterResource(id = R.drawable.logo_punk),
+                        contentDescription = "punk logo",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(38.dp)
+                            .size(42.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(ObsidianDark),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "p",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Black,
-                                color = EmeraldGreen,
-                                fontSize = 20.sp
-                            )
-                        )
-                    }
+                            .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp))
+                    )
 
                     Column {
                         Text(
