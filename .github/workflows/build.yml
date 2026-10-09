@@ -42,20 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.1.1
-        name: "Punk v1.1.1 (Conexión a Internet Habilitada, Validación Real con Supabase)"
+        tag_name: v1.1.2
+        name: "Punk v1.1.2 (Rediseño Editorial Brutalista & Estética Apple)"
         body: |
-          ### Punk v1.1.1 - Conexión de Red e Internet Oficial
+          ### Punk v1.1.2 - Rediseño Oficial de Inicio de Sesión
           
-          - **Permisos de Red e Internet:** Se añadieron los permisos obligatorios de Android (`android.permission.INTERNET` y `ACCESS_NETWORK_STATE`), permitiendo que el celular se comunique con Supabase y Vercel sin ser bloqueado por el sistema operativo.
-          - **Validación en Tiempo Real:** Verifica con precisión el correo y contraseña contra tu base de datos de Supabase.
-          - **Protección Anti-Piratería (Device Locking):** Vinculación segura de cuenta al celular del cliente.
-          - **Licencia Vitalicia S/. 10.00:** Acceso permanente sin vencimiento.
-          
-          - **Splash Screen de Entrada:** Presentación de bienvenida con animación y el logo completo de Punk.
-          - **Inicio de Sesión (Login):** Acceso seguro con correo y contraseña para comercios autorizados, con persistencia de sesión y protección por dispositivo.
-          - **Identidad Oficial "Punk":** Icono oficial con la P gótica estilizada y tipografía con P mayúscula en toda la aplicación.
-          - **Gestión de Cuenta & Licencia:** Información de licencia activa en Ajustes con opción de Cerrar Sesión.
+          - **Rediseño Editorial Brutalista Apple:** Pantalla de Login completamente rediseñada con la fotografía arquitectónica brutalista de fondo, composición tipográfica de alto impacto ("Iniciar" Sans Bold + "Sesión" Serif Italic en champagne/crema), logotipo oficial blanco translúcido en cabecera y estética minimalista contemporánea.
+          - **Tarjetas de Entrada Translúcidas:** Campos de correo y contraseña con contenedores oscuros translúcidos, iconos delineados minimalistas y divisores discretos.
+          - **Botón Píldora de Alto Contraste:** Botón principal de acceso en tono marfil/hueso ("Ingresar a Punk") con indicador de flecha y estado de carga integrado.
+          - **Validación en Tiempo Real con Supabase & Vercel:** Conserva al 100% la autenticación contra tu base de datos en tiempo real, bloqueo de piratería por dispositivo (Device Locking) y soporte de licencias vitalicias.
           
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

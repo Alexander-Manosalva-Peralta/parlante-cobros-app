@@ -1,12 +1,16 @@
 package com.parlantecobros.app.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -17,19 +21,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.parlantecobros.app.R
 import com.parlantecobros.app.data.AuthRepository
 import com.parlantecobros.app.data.AuthResult
 import com.parlantecobros.app.data.SessionManager
-import com.parlantecobros.app.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,321 +59,501 @@ fun LoginScreen(
 
     val deviceId = remember { SessionManager.getDeviceId() }
 
+    fun doLogin() {
+        focusManager.clearFocus()
+        if (isLoading) return
+        coroutineScope.launch {
+            isLoading = true
+            errorMessage = null
+            when (val res = AuthRepository.login(email, password)) {
+                is AuthResult.Success -> {
+                    isLoading = false
+                    onLoginSuccess()
+                }
+                is AuthResult.Error -> {
+                    isLoading = false
+                    errorMessage = res.message
+                }
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(LuxuryBackground)
-            .statusBarsPadding()
-            .navigationBarsPadding()
+            .background(Color(0xFF0B0D12))
     ) {
+        // 1. Fotografía arquitectónica brutalista de fondo (fidelidad total a la imagen proporcionada)
+        Image(
+            painter = painterResource(id = R.drawable.bg_login_architectural),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.TopEnd,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // 2. Capa de degradado cinematográfico para legibilidad y profundidad editorial
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF0B0D12).copy(alpha = 0.40f),
+                            Color(0xFF0B0D12).copy(alpha = 0.65f),
+                            Color(0xFF0B0D12).copy(alpha = 0.90f),
+                            Color(0xFF0B0D12).copy(alpha = 0.98f)
+                        )
+                    )
+                )
+        )
+
+        // Degradado lateral sutil hacia la izquierda para contraste del texto
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            Color(0xFF0B0D12).copy(alpha = 0.85f),
+                            Color(0xFF0B0D12).copy(alpha = 0.20f)
+                        )
+                    )
+                )
+        )
+
+        // 3. Detalle gráfico sutil en esquina inferior izquierda (arcos dorados y estrella editorial)
+        Canvas(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val h = size.height
+            val w = size.width
+
+            val arcColorOuter = Color(0xFFC7A77A).copy(alpha = 0.35f)
+            val arcColorInner = Color(0xFFC7A77A).copy(alpha = 0.22f)
+
+            // Arco exterior
+            drawArc(
+                color = arcColorOuter,
+                startAngle = -85f,
+                sweepAngle = 85f,
+                useCenter = false,
+                topLeft = Offset(-w * 0.42f, h - 230.dp.toPx()),
+                size = Size(w * 0.95f, 250.dp.toPx()),
+                style = Stroke(width = 1.2.dp.toPx())
+            )
+
+            // Arco interior
+            drawArc(
+                color = arcColorInner,
+                startAngle = -85f,
+                sweepAngle = 85f,
+                useCenter = false,
+                topLeft = Offset(-w * 0.36f, h - 180.dp.toPx()),
+                size = Size(w * 0.85f, 200.dp.toPx()),
+                style = Stroke(width = 1.dp.toPx())
+            )
+
+            // Estrella de 4 puntas editorial
+            val starX = 48.dp.toPx()
+            val starY = h - 68.dp.toPx()
+            val starColor = Color(0xFFEDE4CA).copy(alpha = 0.85f)
+
+            // Rayo vertical
+            drawLine(
+                color = starColor,
+                start = Offset(starX, starY - 14.dp.toPx()),
+                end = Offset(starX, starY + 14.dp.toPx()),
+                strokeWidth = 1.5.dp.toPx()
+            )
+            // Rayo horizontal
+            drawLine(
+                color = starColor,
+                start = Offset(starX - 14.dp.toPx(), starY),
+                end = Offset(starX + 14.dp.toPx(), starY),
+                strokeWidth = 1.5.dp.toPx()
+            )
+            // Centro iluminado
+            drawCircle(
+                color = Color(0xFFFFFDF5),
+                radius = 1.8.dp.toPx(),
+                center = Offset(starX, starY)
+            )
+        }
+
+        // 4. Contenido Principal Scrollable
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
-                // Logo completo de Punk
-                Image(
-                    painter = painterResource(id = R.drawable.logo_punk),
-                    contentDescription = "Punk Logo",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clip(RoundedCornerShape(22.dp))
-                        .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(22.dp))
-                )
+            // Logotipo oficial Punk (blanco translúcido en esquina superior izquierda)
+            Image(
+                painter = painterResource(id = R.drawable.logo_punk_header),
+                contentDescription = "Punk Logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(36.dp)
+                    .width(64.dp)
+            )
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(42.dp))
 
-                Text(
-                    text = "Iniciar Sesión",
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = TextMain,
-                        letterSpacing = (-0.5).sp
-                    )
-                )
+            // Subtítulo superior editorial
+            Text(
+                text = "BIENVENIDO DE NUEVO",
+                color = Color(0xFFA5AAB4),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 2.sp
+            )
 
-                Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-                Text(
-                    text = "Accede con las credenciales que te asignó tu administrador",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = TextMuted,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    ),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+            // Título Principal: "Iniciar" (Sans Bold) y "Sesión" (Editorial Serif Italic)
+            Text(
+                text = "Iniciar",
+                color = Color(0xFFF7F5EE),
+                fontSize = 44.sp,
+                fontWeight = FontWeight.Black,
+                letterSpacing = (-0.5).sp,
+                lineHeight = 44.sp
+            )
+            Text(
+                text = "Sesión",
+                color = Color(0xFFEDE8D0),
+                fontSize = 50.sp,
+                fontFamily = FontFamily.Serif,
+                fontStyle = FontStyle.Italic,
+                fontWeight = FontWeight.Normal,
+                letterSpacing = (-0.5).sp,
+                lineHeight = 50.sp
+            )
 
-                Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-                // Mensaje de Error si ocurre
-                AnimatedVisibility(visible = errorMessage != null) {
-                    errorMessage?.let { errorText ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp)
-                                .border(1.dp, Color(0xFFFECACA), RoundedCornerShape(16.dp)),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFEF2F2)),
-                            shape = RoundedCornerShape(16.dp)
+            // Texto explicativo sobrio
+            Text(
+                text = "Accede con las credenciales que te asignó tu administrador",
+                color = Color(0xFFA5AAB4),
+                fontSize = 13.sp,
+                lineHeight = 18.sp
+            )
+
+            // Banner flotante de Error (en caso de credenciales incorrectas)
+            AnimatedVisibility(visible = errorMessage != null) {
+                errorMessage?.let { errorText ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 18.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF261216).copy(alpha = 0.94f))
+                            .border(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f), RoundedCornerShape(16.dp))
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.padding(14.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.ErrorOutline,
-                                    contentDescription = null,
-                                    tint = Color(0xFFDC2626),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Text(
-                                    text = errorText,
-                                    style = MaterialTheme.typography.bodySmall.copy(
-                                        color = Color(0xFFB91C1C),
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // Campo Correo Electrónico
-                Text(
-                    text = "CORREO ELECTRÓNICO",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = TextMuted,
-                        letterSpacing = 1.sp
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp)
-                )
-
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                        errorMessage = null
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("comercio@ejemplo.com", color = Color(0xFF9CA3AF)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Email,
-                            contentDescription = null,
-                            tint = TextMuted,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        focusedBorderColor = ObsidianDark,
-                        unfocusedBorderColor = Color(0xFFE5E7EB)
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // Campo Contraseña
-                Text(
-                    text = "CONTRASEÑA",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = TextMuted,
-                        letterSpacing = 1.sp
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp)
-                )
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        errorMessage = null
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Ingresa tu contraseña", color = Color(0xFF9CA3AF)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Lock,
-                            contentDescription = null,
-                            tint = TextMuted,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                             Icon(
-                                imageVector = if (isPasswordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                imageVector = Icons.Outlined.ErrorOutline,
                                 contentDescription = null,
-                                tint = TextMuted,
+                                tint = Color(0xFFF87171),
                                 modifier = Modifier.size(20.dp)
                             )
-                        }
-                    },
-                    visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                            if (!isLoading) {
-                                coroutineScope.launch {
-                                    isLoading = true
-                                    errorMessage = null
-                                    when (val res = AuthRepository.login(email, password)) {
-                                        is AuthResult.Success -> {
-                                            isLoading = false
-                                            onLoginSuccess()
-                                        }
-                                        is AuthResult.Error -> {
-                                            isLoading = false
-                                            errorMessage = res.message
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        focusedBorderColor = ObsidianDark,
-                        unfocusedBorderColor = Color(0xFFE5E7EB)
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(28.dp))
-
-                // Botón Iniciar Sesión
-                Button(
-                    onClick = {
-                        focusManager.clearFocus()
-                        if (!isLoading) {
-                            coroutineScope.launch {
-                                isLoading = true
-                                errorMessage = null
-                                when (val res = AuthRepository.login(email, password)) {
-                                    is AuthResult.Success -> {
-                                        isLoading = false
-                                        onLoginSuccess()
-                                    }
-                                    is AuthResult.Error -> {
-                                        isLoading = false
-                                        errorMessage = res.message
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.dp),
-                    enabled = !isLoading,
-                    shape = RoundedCornerShape(18.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = ObsidianDark,
-                        disabledContainerColor = Color(0xFF6B7280)
-                    )
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(22.dp),
-                            strokeWidth = 2.5.dp
-                        )
-                    } else {
-                        Text(
-                            text = "Ingresar a Punk",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
+                            Text(
+                                text = errorText,
+                                color = Color(0xFFFCA5A5),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
-                        )
+                        }
                     }
                 }
             }
 
-            // Pie de página de Licencia y Protección por Dispositivo
-            Column(
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // Tarjeta Campo: Correo Electrónico
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(Color(0xFF0F1522).copy(alpha = 0.85f))
+                    .border(1.dp, Color(0xFF232D3F).copy(alpha = 0.8f), RoundedCornerShape(18.dp))
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(18.dp)),
-                    colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                    shape = RoundedCornerShape(18.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    Icon(
+                        imageVector = Icons.Outlined.Email,
+                        contentDescription = null,
+                        tint = Color(0xFFA5AAB4),
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(14.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Security,
-                            contentDescription = null,
-                            tint = EmeraldGreen,
-                            modifier = Modifier.size(20.dp)
+                        Text(
+                            text = "CORREO ELECTRÓNICO",
+                            color = Color(0xFFA5AAB4),
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 1.2.sp
                         )
-                        Column {
-                            Text(
-                                text = "Licencia Vinculada a este Dispositivo",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextMain
-                                )
-                            )
-                            Text(
-                                text = "ID: ${deviceId.take(12)}... (Protección anti-piratería)",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    color = TextMuted,
-                                    fontSize = 11.sp
-                                )
-                            )
-                        }
+
+                        Spacer(modifier = Modifier.height(3.dp))
+
+                        BasicTextField(
+                            value = email,
+                            onValueChange = {
+                                email = it
+                                errorMessage = null
+                            },
+                            textStyle = TextStyle(
+                                color = Color.White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
+                            cursorBrush = SolidColor(Color.White),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email,
+                                imeAction = ImeAction.Next
+                            ),
+                            decorationBox = { innerTextField ->
+                                if (email.isEmpty()) {
+                                    Text(
+                                        text = "comercio@ejemplo.com",
+                                        color = Color(0xFF6B7280),
+                                        fontSize = 15.sp
+                                    )
+                                }
+                                innerTextField()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color(0xFF1E2838))
+                        )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Text(
-                    text = "¿No tienes credenciales? Solicítalas a tu administrador",
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = TextMuted,
-                        fontWeight = FontWeight.Medium
-                    )
-                )
             }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Tarjeta Campo: Contraseña
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(Color(0xFF0F1522).copy(alpha = 0.85f))
+                    .border(1.dp, Color(0xFF232D3F).copy(alpha = 0.8f), RoundedCornerShape(18.dp))
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Lock,
+                        contentDescription = null,
+                        tint = Color(0xFFA5AAB4),
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(14.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "CONTRASEÑA",
+                            color = Color(0xFFA5AAB4),
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 1.2.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(3.dp))
+
+                        BasicTextField(
+                            value = password,
+                            onValueChange = {
+                                password = it
+                                errorMessage = null
+                            },
+                            textStyle = TextStyle(
+                                color = Color.White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
+                            cursorBrush = SolidColor(Color.White),
+                            singleLine = true,
+                            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { doLogin() }
+                            ),
+                            decorationBox = { innerTextField ->
+                                if (password.isEmpty()) {
+                                    Text(
+                                        text = "••••••••",
+                                        color = Color(0xFF6B7280),
+                                        fontSize = 15.sp
+                                    )
+                                }
+                                innerTextField()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color(0xFF1E2838))
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = { isPasswordVisible = !isPasswordVisible },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                            contentDescription = if (isPasswordVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                            tint = Color(0xFFA5AAB4),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(26.dp))
+
+            // Botón Principal Píldora: "Ingresar a Punk"
+            Button(
+                onClick = { doLogin() },
+                enabled = !isLoading,
+                shape = RoundedCornerShape(32.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFEFE7DC),
+                    disabledContainerColor = Color(0xFF8A857E)
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color(0xFF0B0E14),
+                        modifier = Modifier.size(22.dp),
+                        strokeWidth = 2.5.dp
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp)
+                    ) {
+                        Text(
+                            text = "Ingresar a Punk",
+                            color = Color(0xFF0B0E14),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowForward,
+                            contentDescription = null,
+                            tint = Color(0xFF0B0E14),
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .size(18.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(34.dp))
+
+            // Tarjeta de Licencia y Protección Anti-Piratería por Dispositivo
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(Color(0xFF0F1522).copy(alpha = 0.85f))
+                    .border(1.dp, Color(0xFF1E2838), RoundedCornerShape(18.dp))
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Security,
+                        contentDescription = null,
+                        tint = Color(0xFF10B981),
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
+                        Text(
+                            text = "Licencia Vinculada a este Dispositivo",
+                            color = Color.White,
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "ID: ${deviceId.take(12)}... (Protección anti-piratería)",
+                            color = Color(0xFF8E95A5),
+                            fontSize = 11.sp
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            // Pie de página de ayuda
+            Text(
+                text = "¿No tienes credenciales? Solicítalas a tu administrador",
+                color = Color(0xFF7E8494),
+                fontSize = 11.5.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp)
+            )
         }
     }
 }
