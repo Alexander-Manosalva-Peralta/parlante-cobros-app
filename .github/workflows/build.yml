@@ -42,15 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.1.0
-        name: "Punk v1.1.0 (Autenticación Estricta en Supabase, Cero Accesos No Autorizados)"
+        tag_name: v1.1.1
+        name: "Punk v1.1.1 (Conexión a Internet Habilitada, Validación Real con Supabase)"
         body: |
-          ### Punk v1.1.0 - Autenticación Estricta con Supabase y Vercel
+          ### Punk v1.1.1 - Conexión de Red e Internet Oficial
           
-          - **Autenticación Estricta:** Ahora la app valida obligatoriamente contra Supabase y Vercel en tiempo real. Bloquea cualquier correo o contraseña no registrados en el panel de administrador.
-          - **Doble Redundancia (Vercel + Supabase Directo):** La app verifica contra el servidor Vercel y cuenta con consulta directa a Supabase como respaldo.
-          - **Protección Anti-Piratería (Device Locking):** Vinculación exclusiva al celular del comercio.
-          - **Licencia Vitalicia S/. 10.00:** Acceso permanente sin fechas de vencimiento.
+          - **Permisos de Red e Internet:** Se añadieron los permisos obligatorios de Android (`android.permission.INTERNET` y `ACCESS_NETWORK_STATE`), permitiendo que el celular se comunique con Supabase y Vercel sin ser bloqueado por el sistema operativo.
+          - **Validación en Tiempo Real:** Verifica con precisión el correo y contraseña contra tu base de datos de Supabase.
+          - **Protección Anti-Piratería (Device Locking):** Vinculación segura de cuenta al celular del cliente.
+          - **Licencia Vitalicia S/. 10.00:** Acceso permanente sin vencimiento.
           
           - **Splash Screen de Entrada:** Presentación de bienvenida con animación y el logo completo de Punk.
           - **Inicio de Sesión (Login):** Acceso seguro con correo y contraseña para comercios autorizados, con persistencia de sesión y protección por dispositivo.
