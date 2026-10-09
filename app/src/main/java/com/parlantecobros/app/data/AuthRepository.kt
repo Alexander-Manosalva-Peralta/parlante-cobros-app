@@ -17,8 +17,8 @@ sealed class AuthResult {
 
 object AuthRepository {
 
-    // URL base de la API del panel de administración en Vercel
-    var backendApiUrl: String = "https://punk-admin-dashboard.vercel.app/api/licenses/validate"
+    // URL base de la API del panel de administración en Vercel en vivo
+    var backendApiUrl: String = "https://punk-admin-dashboard-qgmq.vercel.app/api/licenses/validate"
 
     suspend fun login(email: String, pass: String): AuthResult = withContext(Dispatchers.IO) {
         val cleanEmail = email.trim().lowercase()

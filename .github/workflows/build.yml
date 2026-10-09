@@ -42,10 +42,14 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.8
-        name: "Punk v1.0.8 (Splash Screen, Login con Credenciales, Identidad Oficial)"
+        tag_name: v1.0.9
+        name: "Punk v1.0.9 (Conexión Directa a Vercel en Vivo, Licencia Vitalicia S/. 10)"
         body: |
-          ### Punk v1.0.8 - Splash Screen & Inicio de Sesión de Licencias
+          ### Punk v1.0.9 - Conexión Directa al Servidor Vercel en Vivo
+          
+          - **Conexión en Vivo con Vercel:** Integrado con `https://punk-admin-dashboard-qgmq.vercel.app` para validación de licencias en tiempo real.
+          - **Modelo de Licencia Vitalicia (S/. 10.00):** Acceso permanente sin vencimiento ni cobros recurrentes.
+          - **Protección Anti-Piratería (Device Locking):** Vinculación al teléfono celular del comercio.
           
           - **Splash Screen de Entrada:** Presentación de bienvenida con animación y el logo completo de Punk.
           - **Inicio de Sesión (Login):** Acceso seguro con correo y contraseña para comercios autorizados, con persistencia de sesión y protección por dispositivo.
