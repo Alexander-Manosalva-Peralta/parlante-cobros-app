@@ -42,10 +42,10 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.1.3
-        name: "Punk v1.1.3 (Diseño Oficial Completo con Imagen Integrada)"
+        tag_name: v1.1.4
+        name: "Punk v1.1.4 (Actualización de Imagen de Fondo)"
         body: |
-          ### Punk v1.1.3 - Versión Oficial con Imagen Integrada
+          ### Punk v1.1.4 - Actualización de Imagen de Fondo Oficial
 
           - **Diseño Completo Integrado:** Fondo arquitectónico oficial de alta fidelidad con tipografía, logotipo Punk, contrastes y elementos visuales originales sin textos duplicados ni superposiciones.
           - **Formulario Transparente y Limpio:** Campos de correo y contraseña alineados con precisión bajo el título integrado.
