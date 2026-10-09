@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
-    val focusManager = LocalFocusManager()
+    val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
 
     var email by remember { mutableStateOf("") }
