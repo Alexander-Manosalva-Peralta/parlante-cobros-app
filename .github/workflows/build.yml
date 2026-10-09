@@ -42,16 +42,16 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.1.2
-        name: "Punk v1.1.2 (Rediseño Editorial Brutalista & Estética Apple)"
+        tag_name: v1.1.3
+        name: "Punk v1.1.3 (Diseño Oficial Completo con Imagen Integrada)"
         body: |
-          ### Punk v1.1.2 - Rediseño Oficial de Inicio de Sesión
-          
-          - **Rediseño Editorial Brutalista Apple:** Pantalla de Login completamente rediseñada con la fotografía arquitectónica brutalista de fondo, composición tipográfica de alto impacto ("Iniciar" Sans Bold + "Sesión" Serif Italic en champagne/crema), logotipo oficial blanco translúcido en cabecera y estética minimalista contemporánea.
-          - **Tarjetas de Entrada Translúcidas:** Campos de correo y contraseña con contenedores oscuros translúcidos, iconos delineados minimalistas y divisores discretos.
-          - **Botón Píldora de Alto Contraste:** Botón principal de acceso en tono marfil/hueso ("Ingresar a Punk") con indicador de flecha y estado de carga integrado.
-          - **Validación en Tiempo Real con Supabase & Vercel:** Conserva al 100% la autenticación contra tu base de datos en tiempo real, bloqueo de piratería por dispositivo (Device Locking) y soporte de licencias vitalicias.
-          
+          ### Punk v1.1.3 - Versión Oficial con Imagen Integrada
+
+          - **Diseño Completo Integrado:** Fondo arquitectónico oficial de alta fidelidad con tipografía, logotipo Punk, contrastes y elementos visuales originales sin textos duplicados ni superposiciones.
+          - **Formulario Transparente y Limpio:** Campos de correo y contraseña alineados con precisión bajo el título integrado.
+          - **Botón de Ingreso Píldora de Alto Contraste:** Acceso rápido con estado de carga y soporte directo de autenticación en tiempo real con Supabase y Vercel.
+          - **Protección Anti-Piratería (Device Locking):** Vinculación segura de cuenta y licencia vitalicia por dispositivo.
+
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
           2. Presiona **Actualizar/Instalar**.

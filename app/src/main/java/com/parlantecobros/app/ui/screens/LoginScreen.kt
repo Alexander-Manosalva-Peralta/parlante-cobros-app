@@ -1,12 +1,9 @@
 package com.parlantecobros.app.ui.screens
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,18 +18,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
@@ -83,105 +74,16 @@ fun LoginScreen(
             .fillMaxSize()
             .background(Color(0xFF0B0D12))
     ) {
-        // 1. Fotografía arquitectónica brutalista de fondo (fidelidad total a la imagen proporcionada)
+        // 1. Imagen completa proporcionada por el usuario (incluye fondo, logo, títulos y detalles gráficos)
         Image(
             painter = painterResource(id = R.drawable.bg_login_architectural),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            alignment = Alignment.TopEnd,
+            alignment = Alignment.TopCenter,
             modifier = Modifier.fillMaxSize()
         )
 
-        // 2. Capa de degradado cinematográfico para legibilidad y profundidad editorial
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF0B0D12).copy(alpha = 0.40f),
-                            Color(0xFF0B0D12).copy(alpha = 0.65f),
-                            Color(0xFF0B0D12).copy(alpha = 0.90f),
-                            Color(0xFF0B0D12).copy(alpha = 0.98f)
-                        )
-                    )
-                )
-        )
-
-        // Degradado lateral sutil hacia la izquierda para contraste del texto
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFF0B0D12).copy(alpha = 0.85f),
-                            Color(0xFF0B0D12).copy(alpha = 0.20f)
-                        )
-                    )
-                )
-        )
-
-        // 3. Detalle gráfico sutil en esquina inferior izquierda (arcos dorados y estrella editorial)
-        Canvas(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val h = size.height
-            val w = size.width
-
-            val arcColorOuter = Color(0xFFC7A77A).copy(alpha = 0.35f)
-            val arcColorInner = Color(0xFFC7A77A).copy(alpha = 0.22f)
-
-            // Arco exterior
-            drawArc(
-                color = arcColorOuter,
-                startAngle = -85f,
-                sweepAngle = 85f,
-                useCenter = false,
-                topLeft = Offset(-w * 0.42f, h - 230.dp.toPx()),
-                size = Size(w * 0.95f, 250.dp.toPx()),
-                style = Stroke(width = 1.2.dp.toPx())
-            )
-
-            // Arco interior
-            drawArc(
-                color = arcColorInner,
-                startAngle = -85f,
-                sweepAngle = 85f,
-                useCenter = false,
-                topLeft = Offset(-w * 0.36f, h - 180.dp.toPx()),
-                size = Size(w * 0.85f, 200.dp.toPx()),
-                style = Stroke(width = 1.dp.toPx())
-            )
-
-            // Estrella de 4 puntas editorial
-            val starX = 48.dp.toPx()
-            val starY = h - 68.dp.toPx()
-            val starColor = Color(0xFFEDE4CA).copy(alpha = 0.85f)
-
-            // Rayo vertical
-            drawLine(
-                color = starColor,
-                start = Offset(starX, starY - 14.dp.toPx()),
-                end = Offset(starX, starY + 14.dp.toPx()),
-                strokeWidth = 1.5.dp.toPx()
-            )
-            // Rayo horizontal
-            drawLine(
-                color = starColor,
-                start = Offset(starX - 14.dp.toPx(), starY),
-                end = Offset(starX + 14.dp.toPx(), starY),
-                strokeWidth = 1.5.dp.toPx()
-            )
-            // Centro iluminado
-            drawCircle(
-                color = Color(0xFFFFFDF5),
-                radius = 1.8.dp.toPx(),
-                center = Offset(starX, starY)
-            )
-        }
-
-        // 4. Contenido Principal Scrollable
+        // 2. Contenido interactivo: Formulario alineado perfectamente bajo el texto integrado de la imagen
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -191,60 +93,8 @@ fun LoginScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Spacer(modifier = Modifier.height(26.dp))
-
-            // Logotipo oficial Punk (blanco translúcido en esquina superior izquierda)
-            Image(
-                painter = painterResource(id = R.drawable.logo_punk_header),
-                contentDescription = "Punk Logo",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .height(36.dp)
-                    .width(64.dp)
-            )
-
-            Spacer(modifier = Modifier.height(42.dp))
-
-            // Subtítulo superior editorial
-            Text(
-                text = "BIENVENIDO DE NUEVO",
-                color = Color(0xFFA5AAB4),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 2.sp
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Título Principal: "Iniciar" (Sans Bold) y "Sesión" (Editorial Serif Italic)
-            Text(
-                text = "Iniciar",
-                color = Color(0xFFF7F5EE),
-                fontSize = 44.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = (-0.5).sp,
-                lineHeight = 44.sp
-            )
-            Text(
-                text = "Sesión",
-                color = Color(0xFFEDE8D0),
-                fontSize = 50.sp,
-                fontFamily = FontFamily.Serif,
-                fontStyle = FontStyle.Italic,
-                fontWeight = FontWeight.Normal,
-                letterSpacing = (-0.5).sp,
-                lineHeight = 50.sp
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Texto explicativo sobrio
-            Text(
-                text = "Accede con las credenciales que te asignó tu administrador",
-                color = Color(0xFFA5AAB4),
-                fontSize = 13.sp,
-                lineHeight = 18.sp
-            )
+            // Espaciador exacto para que los campos de entrada comiencen justo debajo del texto integrado en la imagen
+            Spacer(modifier = Modifier.height(315.dp))
 
             // Banner flotante de Error (en caso de credenciales incorrectas)
             AnimatedVisibility(visible = errorMessage != null) {
@@ -252,7 +102,7 @@ fun LoginScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 18.dp)
+                            .padding(bottom = 14.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color(0xFF261216).copy(alpha = 0.94f))
                             .border(1.dp, Color(0xFFEF4444).copy(alpha = 0.5f), RoundedCornerShape(16.dp))
@@ -278,8 +128,6 @@ fun LoginScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(30.dp))
 
             // Tarjeta Campo: Correo Electrónico
             Box(
