@@ -42,14 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.0.9
-        name: "Punk v1.0.9 (Conexión Directa a Vercel en Vivo, Licencia Vitalicia S/. 10)"
+        tag_name: v1.1.0
+        name: "Punk v1.1.0 (Autenticación Estricta en Supabase, Cero Accesos No Autorizados)"
         body: |
-          ### Punk v1.0.9 - Conexión Directa al Servidor Vercel en Vivo
+          ### Punk v1.1.0 - Autenticación Estricta con Supabase y Vercel
           
-          - **Conexión en Vivo con Vercel:** Integrado con `https://punk-admin-dashboard-qgmq.vercel.app` para validación de licencias en tiempo real.
-          - **Modelo de Licencia Vitalicia (S/. 10.00):** Acceso permanente sin vencimiento ni cobros recurrentes.
-          - **Protección Anti-Piratería (Device Locking):** Vinculación al teléfono celular del comercio.
+          - **Autenticación Estricta:** Ahora la app valida obligatoriamente contra Supabase y Vercel en tiempo real. Bloquea cualquier correo o contraseña no registrados en el panel de administrador.
+          - **Doble Redundancia (Vercel + Supabase Directo):** La app verifica contra el servidor Vercel y cuenta con consulta directa a Supabase como respaldo.
+          - **Protección Anti-Piratería (Device Locking):** Vinculación exclusiva al celular del comercio.
+          - **Licencia Vitalicia S/. 10.00:** Acceso permanente sin fechas de vencimiento.
           
           - **Splash Screen de Entrada:** Presentación de bienvenida con animación y el logo completo de Punk.
           - **Inicio de Sesión (Login):** Acceso seguro con correo y contraseña para comercios autorizados, con persistencia de sesión y protección por dispositivo.
