@@ -68,9 +68,9 @@ fun SplashScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(32.dp)
         ) {
-            // Logo completo de Punk
+            // Logo P de Punk oficial
             Image(
-                painter = painterResource(id = R.drawable.logo_punk),
+                painter = painterResource(id = R.drawable.logo_p_solo),
                 contentDescription = "Punk Logo",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

@@ -42,10 +42,14 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.1.4
-        name: "Punk v1.1.4 (Actualización de Imagen de Fondo)"
+        tag_name: v1.1.5
+        name: "Punk v1.1.5 (Nuevo Logo Oficial P al Inicio y en Caja)"
         body: |
-          ### Punk v1.1.4 - Actualización de Imagen de Fondo Oficial
+          ### Punk v1.1.5 - Logo Oficial P Sola (Splash e Inicio)
+
+          - **Logo Oficial P Sola al Iniciar:** Pantalla de bienvenida (Splash Screen) actualizada con la icónica 'P' estilizada con humo en alta definición.
+          - **Logo Oficial en Cabecera de Inicio (Buenas Tardes):** Barra superior del panel principal con la 'P' sola oficial.
+          - **Pantalla de Login Optimizada:** Fondo arquitectónico brutalista de alta fidelidad e inicio de sesión seguro conectado a Supabase y Vercel.
 
           - **Diseño Completo Integrado:** Fondo arquitectónico oficial de alta fidelidad con tipografía, logotipo Punk, contrastes y elementos visuales originales sin textos duplicados ni superposiciones.
           - **Formulario Transparente y Limpio:** Campos de correo y contraseña alineados con precisión bajo el título integrado.
