@@ -70,33 +70,40 @@ object PaymentParser {
     private fun isIncomingPayment(content: String, pkg: String): Boolean {
         val lower = content.lowercase()
 
-        // Filtro para ignorar notificaciones de pagos que uno mismo hizo (egreso) o promociones
-        val isOutgoing = lower.contains("has pagado") ||
-                lower.contains("pagaste") ||
-                lower.contains("tu pago de") ||
-                lower.contains("compra aprobada") ||
-                lower.contains("promoción") ||
-                lower.contains("promocion") ||
-                lower.contains("descuento") ||
-                lower.contains("código de aprobación") ||
-                lower.contains("enviaste")
+        // 1. Filtro estricto contra promociones, campañas, sorteos y marketing (ej: 'Gana 50 soles con Yape Hijos')
+        val promoKeywords = listOf(
+            "gana", "ganar", "ganaste", "premio", "premios", "sorteo", "sorteos",
+            "hijo", "hijos", "promoción", "promocion", "promo", "descuento", "descuentos",
+            "crédito", "credito", "préstamo", "prestamo", "aprovecha", "campaña", "campana",
+            "invita", "invitar", "registro", "registra", "beneficio", "beneficios",
+            "descubre", "ahorra", "recarga", "compra", "oferta", "ofertas",
+            "abre tu", "pide tu", "solicita", "accede a", "conoce más", "conoce mas"
+        )
+        if (promoKeywords.any { lower.contains(it) }) {
+            return false
+        }
 
-        if (isOutgoing) return false
+        // 2. Filtro para ignorar notificaciones de egreso (pagos realizados por el propio usuario)
+        val outgoingKeywords = listOf(
+            "has pagado", "pagaste", "tu pago de", "compra aprobada",
+            "código de aprobación", "codigo de aprobacion", "enviaste",
+            "transferencia realizada", "pago exitoso", "yapeaste", "plineaste"
+        )
+        if (outgoingKeywords.any { lower.contains(it) }) {
+            return false
+        }
 
-        // Palabras clave de cobro/ingreso
+        // 3. Palabras clave obligatorias y afirmativas de cobro/ingreso recibido
         val incomingKeywords = listOf(
-            "te llegó", "te enviaron", "te envió", "te envio", "te transfirió",
-            "te transfirio", "recibiste", "abono", "transferencia recibida",
-            "yapeaste con éxito", "te yapeó", "te yapearon", "te plineó",
-            "te plinearon", "recibiste un yape", "recibiste un plin"
+            "te llegó", "te llego", "te enviaron", "te envió", "te envio",
+            "te transfirió", "te transfirio", "recibiste", "abono",
+            "transferencia recibida", "te yapeó", "te yapeo", "te yapearon",
+            "te plineó", "te plineo", "te plinearon", "recibiste un yape",
+            "recibiste un plin", "te transfirieron", "te pagó", "te pago",
+            "pago recibido", "cobro recibido"
         )
 
-        val hasIncomingKeyword = incomingKeywords.any { lower.contains(it) }
-
-        // Si la notificación viene de la app de Yape (com.bcp.innovacxion.yapeapp)
-        val isYapeApp = pkg.contains("yape") || pkg.contains("innovacxion") || lower.contains("yape")
-
-        return hasIncomingKeyword || isYapeApp
+        return incomingKeywords.any { lower.contains(it) }
     }
 
     private fun extractAmount(text: String, pkg: String): Double? {

@@ -58,6 +58,7 @@ class CobrosNotificationListener : NotificationListenerService() {
     override fun onCreate() {
         super.onCreate()
         try {
+            PaymentRepository.init(applicationContext)
             speechManager = SpeechManager(applicationContext)
             PunkKeepAliveService.start(applicationContext)
             val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())

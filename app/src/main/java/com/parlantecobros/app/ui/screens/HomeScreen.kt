@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -653,6 +654,7 @@ fun SettingsContent(
     onLogout: () -> Unit = {}
 ) {
     val session by SessionManager.sessionState.collectAsState()
+    val uriHandler = LocalUriHandler.current
 
     LazyColumn(
         modifier = Modifier
@@ -856,8 +858,46 @@ fun SettingsContent(
                         )
                     }
 
+                    Divider(color = LuxuryBorder, thickness = 0.8.dp)
+
+                    // Control de Volumen de Voz
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Volumen de Alerta",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextMain
+                                )
+                            )
+                            Text(
+                                text = "${(settings.speechVolume * 100).toInt()}%",
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = EmeraldGreen
+                                )
+                            )
+                        }
+                        Slider(
+                            value = settings.speechVolume,
+                            onValueChange = { vol ->
+                                PaymentRepository.updateSettings { it.copy(speechVolume = vol) }
+                            },
+                            valueRange = 0.1f..1.0f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = EmeraldGreen,
+                                activeTrackColor = EmeraldGreen,
+                                inactiveTrackColor = LuxuryBorder
+                            )
+                        )
+                    }
+
                     OutlinedButton(
-                        onClick = { onTestVoice("¡Yape recibido! Quince soles con cincuenta de Juan Pérez") },
+                        onClick = { onTestVoice("") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp)
                     ) {
@@ -904,6 +944,45 @@ fun SettingsContent(
                         shape = RoundedCornerShape(14.dp)
                     ) {
                         Text("Ajustes del Teléfono (Inicio Automático)", fontWeight = FontWeight.SemiBold)
+                    }
+                }
+            }
+        }
+
+        // Políticas de Privacidad y Cumplimiento Google Play
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Legal y Privacidad",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = TextMain
+                        )
+                    )
+                    Text(
+                        text = "Punk solo lee notificaciones bancarias y billeteras autorizadas en tiempo real para anunciarlas por voz. No lee chats personales ni almacena números de cuenta o tarjetas.",
+                        style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            uriHandler.openUri("https://punk-admin-dashboard-qgmq.vercel.app/privacidad")
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Icon(imageVector = Icons.Outlined.Policy, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Ver Políticas de Privacidad", fontWeight = FontWeight.SemiBold)
                     }
                 }
             }

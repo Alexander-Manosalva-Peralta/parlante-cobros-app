@@ -3,6 +3,7 @@ package com.parlantecobros.app
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -42,6 +43,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SessionManager.init(applicationContext)
+        PaymentRepository.init(applicationContext)
+
+        // Vincular los botones físicos laterales de volumen directamente al canal multimedia
+        volumeControlStream = AudioManager.STREAM_MUSIC
+
         speechManager = SpeechManager(applicationContext)
 
         // Iniciar servicio en primer plano para mantener Punk activo 24/7 con pantalla apagada

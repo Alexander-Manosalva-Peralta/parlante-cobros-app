@@ -42,19 +42,16 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.1.5
-        name: "Punk v1.1.5 (Nuevo Logo Oficial P al Inicio y en Caja)"
+        tag_name: v1.2.0
+        name: "Punk v1.2.0 - Corrección de Preferencias, Audio Multimedia y Filtro Antispam"
         body: |
-          ### Punk v1.1.5 - Logo Oficial P Sola (Splash e Inicio)
+          ### Punk v1.2.0 - Actualización de Estabilidad y Cumplimiento Play Store
 
-          - **Logo Oficial P Sola al Iniciar:** Pantalla de bienvenida (Splash Screen) actualizada con la icónica 'P' estilizada con humo en alta definición.
-          - **Logo Oficial en Cabecera de Inicio (Buenas Tardes):** Barra superior del panel principal con la 'P' sola oficial.
-          - **Pantalla de Login Optimizada:** Fondo arquitectónico brutalista de alta fidelidad e inicio de sesión seguro conectado a Supabase y Vercel.
-
-          - **Diseño Completo Integrado:** Fondo arquitectónico oficial de alta fidelidad con tipografía, logotipo Punk, contrastes y elementos visuales originales sin textos duplicados ni superposiciones.
-          - **Formulario Transparente y Limpio:** Campos de correo y contraseña alineados con precisión bajo el título integrado.
-          - **Botón de Ingreso Píldora de Alto Contraste:** Acceso rápido con estado de carga y soporte directo de autenticación en tiempo real con Supabase y Vercel.
-          - **Protección Anti-Piratería (Device Locking):** Vinculación segura de cuenta y licencia vitalicia por dispositivo.
+          - **Interruptores de Configuración 100% Funcionales y Persistentes:** Guardado permanente en SharedPreferences para 'Mencionar nombre de quien paga' y 'Campanilla previa (Chime)', reflejándose de inmediato en la voz de prueba y en cobros reales.
+          - **Canal de Audio Multimedia (STREAM_MUSIC):** El volumen ahora se controla directamente desde los botones físicos laterales del teléfono. Se eliminó el bloqueo forzado de volumen al 85%.
+          - **Control Deslizante de Volumen en Ajustes:** Nuevo selector de volumen de alerta de voz integrado en el panel de configuración.
+          - **Filtro Estricto Antispam Financiero:** Bloqueo automático de promociones de Yape/Plin (como "Gana 50 soles con Yape Hijos", préstamos, sorteos, etc.) para evitar falsos cobros. Se requiere confirmación positiva de abono recibido.
+          - **Cumplimiento de Políticas Google Play:** Enlace directo a las Políticas de Privacidad oficiales desplegadas en la web.
 
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

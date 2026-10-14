@@ -1,8 +1,11 @@
 package com.parlantecobros.app.data
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.parlantecobros.app.model.AppSource
 import com.parlantecobros.app.model.AppSettings
 import com.parlantecobros.app.model.PaymentItem
+import com.parlantecobros.app.model.SpeechTemplate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +29,17 @@ data class TimeSlotStat(
 
 object PaymentRepository {
 
+    private const val PREFS_NAME = "punk_settings_prefs"
+    private const val KEY_SPEAKER_ENABLED = "key_speaker_enabled"
+    private const val KEY_MENTION_NAME = "key_mention_name"
+    private const val KEY_CHIME = "key_chime"
+    private const val KEY_PITCH = "key_pitch"
+    private const val KEY_RATE = "key_rate"
+    private const val KEY_VOLUME = "key_volume"
+    private const val KEY_TEMPLATE = "key_template"
+
+    private var prefs: SharedPreferences? = null
+
     private val _payments = MutableStateFlow<List<PaymentItem>>(emptyList())
     val payments: StateFlow<List<PaymentItem>> = _payments.asStateFlow()
 
@@ -34,6 +48,43 @@ object PaymentRepository {
 
     private val _lastCapturedNotification = MutableStateFlow<String>("A la espera de notificaciones...")
     val lastCapturedNotification: StateFlow<String> = _lastCapturedNotification.asStateFlow()
+
+    fun init(context: Context) {
+        val sp = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs = sp
+
+        val speaker = sp.getBoolean(KEY_SPEAKER_ENABLED, true)
+        val mentionName = sp.getBoolean(KEY_MENTION_NAME, true)
+        val chime = sp.getBoolean(KEY_CHIME, true)
+        val pitch = sp.getFloat(KEY_PITCH, 1.0f)
+        val rate = sp.getFloat(KEY_RATE, 0.95f)
+        val volume = sp.getFloat(KEY_VOLUME, 1.0f)
+        val templateName = sp.getString(KEY_TEMPLATE, SpeechTemplate.COMPLETO.name) ?: SpeechTemplate.COMPLETO.name
+        val template = try { SpeechTemplate.valueOf(templateName) } catch (_: Exception) { SpeechTemplate.COMPLETO }
+
+        _settings.value = AppSettings(
+            speakerEnabled = speaker,
+            mentionCustomerName = mentionName,
+            speechTemplate = template,
+            chimeBeforeSpeaking = chime,
+            speechPitch = pitch,
+            speechRate = rate,
+            speechVolume = volume
+        )
+    }
+
+    private fun persistSettings(s: AppSettings) {
+        prefs?.edit()?.apply {
+            putBoolean(KEY_SPEAKER_ENABLED, s.speakerEnabled)
+            putBoolean(KEY_MENTION_NAME, s.mentionCustomerName)
+            putBoolean(KEY_CHIME, s.chimeBeforeSpeaking)
+            putFloat(KEY_PITCH, s.speechPitch)
+            putFloat(KEY_RATE, s.speechRate)
+            putFloat(KEY_VOLUME, s.speechVolume)
+            putString(KEY_TEMPLATE, s.speechTemplate.name)
+            apply()
+        }
+    }
 
     fun recordRawNotification(info: String) {
         _lastCapturedNotification.value = info
@@ -68,7 +119,11 @@ object PaymentRepository {
     }
 
     fun updateSettings(transform: (AppSettings) -> AppSettings) {
-        _settings.update(transform)
+        _settings.update { current ->
+            val updated = transform(current)
+            persistSettings(updated)
+            updated
+        }
     }
 
     fun clearHistory() {

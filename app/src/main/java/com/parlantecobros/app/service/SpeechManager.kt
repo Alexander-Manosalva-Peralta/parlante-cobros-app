@@ -56,11 +56,10 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
     private fun setupTtsEngine() {
         configureBestNaturalVoice()
 
-        // USAGE_ALARM garantiza que la voz se escuche AUNQUE la pantalla esté apagada,
-        // el teléfono esté bloqueado o el dispositivo esté en modo silencioso/vibración.
+        // USAGE_MEDIA permite que los botones laterales de volumen del celular controlen el volumen de Punk
         tts?.setAudioAttributes(
             AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                 .build()
         )
@@ -92,7 +91,8 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         isInitialized = true
 
         synchronized(pendingMessages) {
-            pendingMessages.forEach { speakRaw(it) }
+            val currentVol = com.parlantecobros.app.data.PaymentRepository.settings.value.speechVolume
+            pendingMessages.forEach { speakRaw(it, currentVol) }
             pendingMessages.clear()
         }
     }
@@ -151,12 +151,9 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         // 1. Activar WakeLock inmediatamente para que la CPU no se duerma con la pantalla apagada
         acquireWakeLock()
 
-        // 2. Garantizar volumen audible en altavoz
-        ensureAudibleVolume()
-
-        // 3. Tono previo
+        // 2. Tono previo según configuración guardada del usuario
         if (settings.chimeBeforeSpeaking) {
-            playChime()
+            playChime(settings.speechVolume)
             try { Thread.sleep(220) } catch (_: Exception) {}
         }
 
@@ -166,31 +163,11 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         tts?.setSpeechRate(settings.speechRate)
 
         if (isInitialized) {
-            speakRaw(message)
+            speakRaw(message, settings.speechVolume)
         } else {
             synchronized(pendingMessages) {
                 pendingMessages.add(message)
             }
-        }
-    }
-
-    private fun ensureAudibleVolume() {
-        try {
-            val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            // Asegurar volumen de Alarma y Música para que nunca esté silenciado
-            val maxAlarm = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-            val currentAlarm = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            if (currentAlarm < (maxAlarm * 0.4)) {
-                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, (maxAlarm * 0.85).toInt(), 0)
-            }
-
-            val maxMusic = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-            val currentMusic = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-            if (currentMusic < (maxMusic * 0.4)) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (maxMusic * 0.85).toInt(), 0)
-            }
-        } catch (e: Exception) {
-            Log.e("SpeechManager", "Error ajustando volumen", e)
         }
     }
 
@@ -212,25 +189,42 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         }
     }
 
-    fun testVoice(sampleText: String = "¡Yape recibido! Quince soles con cincuenta, de Juan Pérez.") {
+    fun testVoice(sampleText: String = "") {
         acquireWakeLock()
-        ensureAudibleVolume()
-        playChime()
-        try { Thread.sleep(220) } catch (_: Exception) {}
-        speakRaw(sampleText)
+        val settings = com.parlantecobros.app.data.PaymentRepository.settings.value
+
+        // Respetar interruptor de campanilla (Chime)
+        if (settings.chimeBeforeSpeaking) {
+            playChime(settings.speechVolume)
+            try { Thread.sleep(220) } catch (_: Exception) {}
+        }
+
+        // Respetar interruptor de mención de nombre del cliente
+        val textToSpeak = if (sampleText.isNotBlank()) {
+            sampleText
+        } else {
+            if (settings.mentionCustomerName) {
+                "¡Yape recibido! Quince soles con cincuenta, de Juan Pérez."
+            } else {
+                "¡Yape recibido! Quince soles con cincuenta."
+            }
+        }
+
+        tts?.setPitch(settings.speechPitch)
+        tts?.setSpeechRate(settings.speechRate)
+        speakRaw(textToSpeak, settings.speechVolume)
     }
 
-    private fun speakRaw(text: String) {
+    private fun speakRaw(text: String, volume: Float = 1.0f) {
         try {
             synchronized(this) {
                 pendingUtteranceCount++
             }
-            // Enrutamiento forzado por STREAM_ALARM para máxima potencia y pantalla apagada
+            // Enrutamiento en STREAM_MUSIC para permitir control directo por botones físicos de volumen del celular
             val params = Bundle().apply {
-                putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_ALARM)
-                putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1.0f)
+                putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_MUSIC)
+                putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume.coerceIn(0.05f, 1.0f))
             }
-            // QUEUE_ADD: encola pagos sucesivos (como depósitos ráfaga de bancos) sin truncar el anterior
             tts?.speak(
                 text,
                 TextToSpeech.QUEUE_ADD,
@@ -242,10 +236,10 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         }
     }
 
-    private fun playChime() {
+    private fun playChime(volume: Float = 1.0f) {
         try {
-            // STREAM_ALARM se reproduce incluso en modo silencioso y pantalla bloqueada
-            val toneGen = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+            val streamVolume = (volume * 100).toInt().coerceIn(10, 100)
+            val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, streamVolume)
             toneGen.startTone(ToneGenerator.TONE_PROP_BEEP2, 180)
         } catch (e: Exception) {
             Log.e("SpeechManager", "Error reproduciendo tono", e)

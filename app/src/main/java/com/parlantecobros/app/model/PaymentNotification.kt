@@ -85,5 +85,6 @@ data class AppSettings(
     val chimeBeforeSpeaking: Boolean = true,
     val speechPitch: Float = 1.0f,
     val speechRate: Float = 0.95f, // Ligeramente pausado para claridad
+    val speechVolume: Float = 1.0f, // Volumen personalizable (0.1f a 1.0f)
     val activeApps: Map<AppSource, Boolean> = AppSource.values().associateWith { true }
 )
