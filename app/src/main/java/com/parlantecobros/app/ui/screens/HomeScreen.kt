@@ -246,33 +246,32 @@ fun CashierContent(
                     }
                 }
 
-                // Live Status Pill
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(30.dp))
-                        .background(if (settings.speakerEnabled) EmeraldGlow else Color(0xFFE5E7EB))
-                        .border(
-                            1.dp,
-                            if (settings.speakerEnabled) EmeraldGreen.copy(alpha = 0.3f) else Color.Transparent,
-                            RoundedCornerShape(30.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 7.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(7.dp)
+                // Indicador de Estado Discreto y Ejecutivo (Estilo Fintech)
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = LuxurySurface,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, LuxuryBorder)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(if (settings.speakerEnabled) EmeraldGreen else TextMuted)
-                    )
-                    Text(
-                        text = if (settings.speakerEnabled) "En Escucha" else "En Pausa",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (settings.speakerEnabled) EmeraldGreen else TextMuted
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(7.dp)
+                                .clip(CircleShape)
+                                .background(if (settings.speakerEnabled) Color(0xFF10B981) else Color(0xFF9CA3AF))
                         )
-                    )
+                        Text(
+                            text = if (settings.speakerEnabled) "Audio POS Activo" else "Audio Pausado",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = TextMain,
+                                fontSize = 11.sp
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -680,7 +679,7 @@ fun SettingsContent(
             }
         }
 
-        // Tarjeta de Cuenta y Licencia Activa
+        // Tarjeta de Perfil del Comercio
         item {
             Card(
                 modifier = Modifier
@@ -691,20 +690,38 @@ fun SettingsContent(
             ) {
                 Column(
                     modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    // Cabecera: Icono Comercio + Nombre del Negocio en su propio renglón amplio
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Column {
+                        Box(
+                            modifier = Modifier
+                                .size(46.dp)
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color(0xFFF3F4F6))
+                                .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(14.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Storefront,
+                                contentDescription = null,
+                                tint = TextMain,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Comercio Autorizado",
+                                text = "COMERCIO AUTORIZADO",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     color = TextMuted,
                                     fontWeight = FontWeight.Bold,
-                                    letterSpacing = 1.sp
+                                    letterSpacing = 1.2.sp,
+                                    fontSize = 10.sp
                                 )
                             )
                             Text(
@@ -712,43 +729,38 @@ fun SettingsContent(
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = TextMain
-                                )
-                            )
-                        }
-
-                        // Pill Licencia Activa
-                        Surface(
-                            color = EmeraldGlow,
-                            shape = RoundedCornerShape(20.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreen.copy(alpha = 0.3f))
-                        ) {
-                            Text(
-                                text = "Activa (${session.daysRemaining}d)",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    color = EmeraldGreen,
-                                    fontWeight = FontWeight.Bold
                                 ),
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                                maxLines = 2
                             )
                         }
                     }
 
+                    Divider(color = LuxuryBorder, thickness = 0.8.dp)
+
+                    // Pie de Perfil: Correo electrónico con icono + Botón Salir
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
-                            Text(
-                                text = "Correo:",
-                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Email,
+                                contentDescription = null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(16.dp)
                             )
                             Text(
-                                text = session.userEmail.ifEmpty { "admin@punk.com" },
+                                text = session.userEmail.ifEmpty { "comercio@punk.com" },
                                 style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.SemiBold,
+                                    fontWeight = FontWeight.Medium,
                                     color = TextMain
-                                )
+                                ),
+                                maxLines = 1
                             )
                         }
 
@@ -756,13 +768,13 @@ fun SettingsContent(
                             onClick = onLogout,
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFDC2626)),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFCA5A5)),
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFEE2E2)),
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Logout,
                                 contentDescription = "Cerrar Sesión",
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(

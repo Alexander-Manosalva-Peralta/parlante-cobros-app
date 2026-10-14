@@ -42,16 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.2.0
-        name: "Punk v1.2.0 - Corrección de Preferencias, Audio Multimedia y Filtro Antispam"
+        tag_name: v1.2.1
+        name: "Punk v1.2.1 - Rediseño Ejecutivo de Perfil y Estado Minimalista"
         body: |
-          ### Punk v1.2.0 - Actualización de Estabilidad y Cumplimiento Play Store
+          ### Punk v1.2.1 - Refinamiento Estético y Seguridad de Plataforma
 
-          - **Interruptores de Configuración 100% Funcionales y Persistentes:** Guardado permanente en SharedPreferences para 'Mencionar nombre de quien paga' y 'Campanilla previa (Chime)', reflejándose de inmediato en la voz de prueba y en cobros reales.
-          - **Canal de Audio Multimedia (STREAM_MUSIC):** El volumen ahora se controla directamente desde los botones físicos laterales del teléfono. Se eliminó el bloqueo forzado de volumen al 85%.
-          - **Control Deslizante de Volumen en Ajustes:** Nuevo selector de volumen de alerta de voz integrado en el panel de configuración.
-          - **Filtro Estricto Antispam Financiero:** Bloqueo automático de promociones de Yape/Plin (como "Gana 50 soles con Yape Hijos", préstamos, sorteos, etc.) para evitar falsos cobros. Se requiere confirmación positiva de abono recibido.
-          - **Cumplimiento de Políticas Google Play:** Enlace directo a las Políticas de Privacidad oficiales desplegadas en la web.
+          - **Indicador de Estado Ejecutivo y Discreto:** Se reemplazó la etiqueta verde por un distintivo minimalista 'Audio POS Activo' con estética fintech neutral de alto contraste.
+          - **Tarjeta de Comercio Autorizado Reestructurada:** Eliminada la etiqueta deformada de días de licencia. Ahora cuenta con icono de tienda, nombre de negocio espacioso y botón de salir alineado con elegancia.
+          - **Seguridad y Privacidad Web:** Panel administrativo protegido con acceso maestro exclusivo y eliminación de enlaces públicos al dashboard en las políticas de privacidad.
+          - **Persistencia de Configuración y Filtro Antispam:** Todas las mejoras de volumen multimedia, interruptores de voz y bloqueo de promociones bancarias integradas.
 
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
