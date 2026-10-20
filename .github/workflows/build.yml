@@ -42,15 +42,15 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.2.1
-        name: "Punk v1.2.1 - Rediseño Ejecutivo de Perfil y Estado Minimalista"
+        tag_name: v1.2.2
+        name: "Punk v1.2.2 - Restauración y Optimización Bancaria de Cobros Yape y Plin"
         body: |
-          ### Punk v1.2.1 - Refinamiento Estético y Seguridad de Plataforma
+          ### Punk v1.2.2 - Detección Concurrente y Filtro Financiero de Alta Precisión
 
-          - **Indicador de Estado Ejecutivo y Discreto:** Se reemplazó la etiqueta verde por un distintivo minimalista 'Audio POS Activo' con estética fintech neutral de alto contraste.
-          - **Tarjeta de Comercio Autorizado Reestructurada:** Eliminada la etiqueta deformada de días de licencia. Ahora cuenta con icono de tienda, nombre de negocio espacioso y botón de salir alineado con elegancia.
-          - **Seguridad y Privacidad Web:** Panel administrativo protegido con acceso maestro exclusivo y eliminación de enlaces públicos al dashboard en las políticas de privacidad.
-          - **Persistencia de Configuración y Filtro Antispam:** Todas las mejoras de volumen multimedia, interruptores de voz y bloqueo de promociones bancarias integradas.
+          - **Restauración Total de Pagos Yape:** Se reactivó la compatibilidad y captura para todas las notificaciones entrantes de Yape (`com.bcp.innovacxion.yapeapp`). Ahora cada yapeo recibido se detecta, registra inmediatamente en caja e interactúa con el sintetizador de voz.
+          - **Filtro Selectivo Antispam y Antipromociones:** Se corrigió el filtro de marketing para bloquear exclusivamente promociones (como 'Gana 50 soles con Yape Hijos', préstamos, créditos o sorteos) sin afectar las notas de pago de clientes que contengan términos de comercio como compras o recargas.
+          - **Reconocimiento Robusto de Montos y Remitentes:** Soporte para transferencias con o sin céntimos, montos mayores a mil soles con separador de miles, y captura afinada del nombre de cliente o pagador.
+          - **Estética y Ajustes Preservados:** Indicador discreto 'Audio POS Activo', diseño de perfil de comercio sin deformaciones, y persistencia de interruptores de volumen y sonido.
 
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
