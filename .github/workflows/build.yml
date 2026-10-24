@@ -1,4 +1,4 @@
-name: Compilar APK Parlante Cobros
+name: Compilar APK y AAB Punk Cobros
 
 on:
   push:
@@ -30,9 +30,9 @@ jobs:
         gradle wrapper --gradle-version 8.2
         chmod +x gradlew
 
-    - name: Compilar APK Debug
+    - name: Compilar APK Debug y AAB Release
       run: |
-        ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee build.log
+        ./gradlew assembleDebug bundleRelease --stacktrace --no-daemon 2>&1 | tee build.log
         STATUS=${PIPESTATUS[0]}
         if [ $STATUS -ne 0 ]; then
           echo "=== GRADLE FAILURE DETECTED ==="
@@ -58,11 +58,17 @@ jobs:
         name: gradle-failure-log
         path: build.log
 
-    - name: Subir APK como Artefacto
+    - name: Subir APK Debug como Artefacto
       uses: actions/upload-artifact@v4
       with:
-        name: ParlanteCobros-APK
+        name: Punk-APK-Debug
         path: app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Subir AAB Release como Artefacto (para Google Play)
+      uses: actions/upload-artifact@v4
+      with:
+        name: Punk-AAB-PlayStore
+        path: app/build/outputs/bundle/release/app-release.aab
 
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
@@ -73,15 +79,21 @@ jobs:
           ### Punk v1.2.3 - Arquitectura Google Play `com.vexum.punk` & Supervivencia 24/7
 
           - **Identidad Oficial Google Play:** Paquete actualizado oficialmente a `com.vexum.punk` con autoría e identidad corporativa de Vexum.
-          - **Supervivencia y Watchdog 24/7:** Servicio con reconexión indestructible contra el modo reposo/Doze de Android, receptor de reinicio del dispositivo (`BOOT_COMPLETED`, `USER_PRESENT`, `SCREEN_ON`) y ciclo de vigilancia cada 10 minutos para que nunca se apague tras horas o días de uso.
-          - **Historial Persistente con Auto-Limpieza (30 días):** Los cobros ahora se almacenan de forma segura en la memoria interna local del teléfono. Se eliminó el botón accidental de 'Limpiar' y se implementó una purga automática a los 30 días para no consumir almacenamiento.
-          - **Filtros por Período y Agrupación por Fecha:** Vistas segmentadas de 'Hoy', 'Esta Semana' y 'Este Mes' en caja y analítica, con agrupación visual estilo Apple (Hoy, Ayer, fecha).
-          - **Analítica de Franjas Simplificada:** Clasificación en 3 turnos: 'Día', 'Tarde' y 'Noche' (con horarios delimitados en código sin recargar la interfaz).
-          - **Ajustes Rediseñados Estilo Apple:** Secciones agrupadas Inset Grouped, controles unificados y pie de página ejecutivo 'Desarrollado por Vexum'.
+          - **Supervivencia y Watchdog 24/7:** Servicio con reconexión indestructible contra el modo reposo/Doze de Android.
+          - **Historial Persistente con Auto-Limpieza (30 días):** Cobros guardados localmente con purga automática.
+          - **Filtros por Período:** Vistas de Hoy, Esta Semana y Este Mes con agrupación por fecha.
+          - **Analítica de Franjas:** Clasificación en Día, Tarde y Noche.
+          - **Ajustes Rediseñados Estilo Apple:** Inset Grouped con pie ejecutivo "Desarrollado por Vexum".
 
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.
           2. Presiona **Actualizar/Instalar**.
-        files: app/build/outputs/apk/debug/app-debug.apk
+
+          **Para Google Play Store:**
+          Descarga `app-release.aab` y súbelo en Play Console → Prueba interna.
+        files: |
+          app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/bundle/release/app-release.aab
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
