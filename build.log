@@ -1,0 +1,363 @@
+Fetching distribution.
+Downloading https://services.gradle.org/distributions/gradle-8.2-bin.zip
+............10%............20%............30%.............40%............50%............60%............70%.............80%............90%............100%
+
+Welcome to Gradle 8.2!
+
+Here are the highlights of this release:
+ - Kotlin DSL: new reference documentation, assignment syntax by default
+ - Kotlin DSL is now the default with Gradle init
+ - Improved suggestions to resolve errors in console output
+
+For more details see https://docs.gradle.org/8.2/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.2/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:processDebugManifestForPackage
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
+> Task :app:mergeExtDexDebug
+> Task :app:mergeDebugJniLibFolders
+> Task :app:mergeLibDexDebug
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:generateReleaseResValues
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:processApplicationManifestReleaseForBundle
+> Task :app:packageReleaseResources
+> Task :app:checkReleaseAarMetadata
+> Task :app:parseReleaseLocalResources
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:buildKotlinToolingMetadata
+> Task :app:javaPreCompileRelease
+> Task :app:processReleaseManifestForPackage
+> Task :app:desugarReleaseFileDependencies
+> Task :app:mergeReleaseResources
+> Task :app:compileDebugKotlin
+> Task :app:mergeExtDexRelease
+
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/service/SpeechManager.kt:81:26 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/AnalyticsScreen.kt:29:9 Variable 'payments' is never used
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/AnalyticsScreen.kt:135:21 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/AnalyticsScreen.kt:197:62 'TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.TrendingUp
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:188:5 Parameter 'payments' is never used
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:194:5 Parameter 'onTestVoice' is never used
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:465:21 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:857:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:892:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:935:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:951:66 'VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.VolumeUp
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:965:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1027:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1034:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1069:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1127:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1134:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/LoginScreen.kt:342:58 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/SplashScreen.kt:55:9 Variable 'alpha' is never used
+
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:writeReleaseAppMetadata
+> Task :app:processReleaseResources
+> Task :app:mergeReleaseArtProfile
+> Task :app:bundleReleaseResources
+> Task :app:collectReleaseDependencies
+> Task :app:configureReleaseDependencies
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:parseReleaseIntegrityConfig
+> Task :app:validateSigningRelease
+> Task :app:mergeDebugJavaResource
+
+> Task :app:mergeExtDexRelease
+ERROR: D8: java.lang.OutOfMemoryError: Java heap space
+com.android.builder.dexing.DexArchiveMergerException: Error while merging dex archives: 
+	at com.android.builder.dexing.D8DexArchiveMerger.getMergingExceptionToRethrow(D8DexArchiveMerger.java:159)
+	at com.android.builder.dexing.D8DexArchiveMerger.mergeDexArchives(D8DexArchiveMerger.java:147)
+	at com.android.build.gradle.internal.tasks.DexMergingWorkAction.merge(DexMergingTask.kt:891)
+	at com.android.build.gradle.internal.tasks.DexMergingWorkAction.run(DexMergingTask.kt:835)
+	at com.android.build.gradle.internal.profile.ProfileAwareWorkAction.execute(ProfileAwareWorkAction.kt:74)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:170)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:187)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:120)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:162)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:249)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:109)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:114)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:157)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:126)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: com.android.tools.r8.CompilationFailedException: Compilation failed to complete
+	at Version.fakeStackEntry(Version_8.2.47.java:0)
+	at com.android.tools.r8.T.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:5)
+	at com.android.tools.r8.utils.S0.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:82)
+	at com.android.tools.r8.utils.S0.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:32)
+	at com.android.tools.r8.utils.S0.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:31)
+	at com.android.tools.r8.utils.S0.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:2)
+	at com.android.tools.r8.D8.run(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:11)
+	at com.android.builder.dexing.D8DexArchiveMerger.mergeDexArchives(D8DexArchiveMerger.java:145)
+	... 38 more
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.nio.HeapByteBuffer.<init>(HeapByteBuffer.java:64)
+	at java.base/java.nio.ByteBuffer.allocate(ByteBuffer.java:363)
+	at com.android.tools.r8.ByteBufferProvider.acquireByteBuffer(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:1)
+	at com.android.tools.r8.dex.y.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:1)
+	at com.android.tools.r8.dex.y.c(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:5)
+	at com.android.tools.r8.dex.y.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:7)
+	at com.android.tools.r8.utils.P1.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:21)
+	at com.android.tools.r8.dex.M.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:772)
+	at com.android.tools.r8.dex.M.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:28)
+	at com.android.tools.r8.dex.M$$Lambda$2789/0x00007f6e558a7520.accept(Unknown Source)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at com.android.tools.r8.dex.M.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:500)
+	at com.android.tools.r8.dex.M.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:271)
+	at com.android.tools.r8.dex.k.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:5)
+	at com.android.tools.r8.dex.k$$Lambda$2772/0x00007f6e558a0af0.get(Unknown Source)
+	at com.android.tools.r8.utils.A3.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:52)
+	at com.android.tools.r8.dex.k.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:778)
+	at com.android.tools.r8.dex.k.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:34)
+	at com.android.tools.r8.dex.k$$Lambda$2747/0x00007f6e5589add8.apply(Unknown Source)
+	at com.android.tools.r8.utils.f3.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:4)
+	at com.android.tools.r8.utils.f3$$Lambda$2414/0x00007f6e5579c670.a(Unknown Source)
+	at com.android.tools.r8.utils.f3.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:19)
+	at com.android.tools.r8.utils.f3$$Lambda$2309/0x00007f6e5573f340.call(Unknown Source)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedCallable.exec(ForkJoinTask.java:1428)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+
+
+> Task :app:mergeExtDexRelease FAILED
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/service/SpeechManager.kt:81:26 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/AnalyticsScreen.kt:29:9 Variable 'payments' is never used
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/AnalyticsScreen.kt:135:21 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/AnalyticsScreen.kt:197:62 'TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.TrendingUp
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:188:5 Parameter 'payments' is never used
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:194:5 Parameter 'onTestVoice' is never used
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:465:21 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:857:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:892:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:935:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:951:66 'VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.VolumeUp
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:965:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1027:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1034:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1069:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1127:62 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/HomeScreen.kt:1134:25 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/LoginScreen.kt:342:58 'ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.ArrowForward
+w: file:///home/runner/work/parlante-cobros-app/parlante-cobros-app/app/src/main/java/com/vexum/punk/ui/screens/SplashScreen.kt:55:9 Variable 'alpha' is never used
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:mergeExtDexRelease'.
+> A failure occurred while executing com.android.build.gradle.internal.tasks.DexMergingTaskDelegate
+   > There was a failure while executing work items
+      > A failure occurred while executing com.android.build.gradle.internal.tasks.DexMergingWorkAction
+         > com.android.builder.dexing.DexArchiveMergerException: Error while merging dex archives: 
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:mergeExtDexRelease'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:149)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:282)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:147)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:135)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:337)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:324)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:317)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing com.android.build.gradle.internal.tasks.DexMergingTaskDelegate
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:172)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:187)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:120)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:162)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:249)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:109)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:114)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:157)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:126)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.WorkerExecutionException: There was a failure while executing work items
+	at org.gradle.workers.internal.DefaultWorkerExecutor.workerExecutionException(DefaultWorkerExecutor.java:219)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.await(DefaultWorkerExecutor.java:201)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:72)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:170)
+	... 11 more
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing com.android.build.gradle.internal.tasks.DexMergingWorkAction
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:283)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:321)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:304)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:309)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:88)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.await(DefaultWorkerExecutor.java:199)
+	... 25 more
+Caused by: com.android.build.api.transform.TransformException: com.android.builder.dexing.DexArchiveMergerException: Error while merging dex archives: 
+	at com.android.build.gradle.internal.tasks.DexMergingWorkAction.merge(DexMergingTask.kt:905)
+	at com.android.build.gradle.internal.tasks.DexMergingWorkAction.run(DexMergingTask.kt:835)
+	at com.android.build.gradle.internal.profile.ProfileAwareWorkAction.execute(ProfileAwareWorkAction.kt:74)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	... 24 more
+Caused by: com.android.builder.dexing.DexArchiveMergerException: Error while merging dex archives: 
+	at com.android.builder.dexing.D8DexArchiveMerger.getMergingExceptionToRethrow(D8DexArchiveMerger.java:159)
+	at com.android.builder.dexing.D8DexArchiveMerger.mergeDexArchives(D8DexArchiveMerger.java:147)
+	at com.android.build.gradle.internal.tasks.DexMergingWorkAction.merge(DexMergingTask.kt:891)
+	... 31 more
+Caused by: com.android.tools.r8.CompilationFailedException: Compilation failed to complete
+	at Version.fakeStackEntry(Version_8.2.47.java:0)
+	at com.android.tools.r8.T.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:5)
+	at com.android.tools.r8.utils.S0.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:82)
+	at com.android.tools.r8.utils.S0.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:32)
+	at com.android.tools.r8.utils.S0.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:31)
+	at com.android.tools.r8.utils.S0.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:2)
+	at com.android.tools.r8.D8.run(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:11)
+	at com.android.builder.dexing.D8DexArchiveMerger.mergeDexArchives(D8DexArchiveMerger.java:145)
+	... 32 more
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at com.android.tools.r8.ByteBufferProvider.acquireByteBuffer(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:1)
+	at com.android.tools.r8.dex.y.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:1)
+	at com.android.tools.r8.dex.y.c(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:5)
+	at com.android.tools.r8.dex.y.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:7)
+	at com.android.tools.r8.utils.P1.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:21)
+	at com.android.tools.r8.dex.M.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:772)
+	at com.android.tools.r8.dex.M.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:28)
+	at com.android.tools.r8.dex.M$$Lambda$2789/0x00007f6e558a7520.accept(Unknown Source)
+	at com.android.tools.r8.dex.M.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:500)
+	at com.android.tools.r8.dex.M.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:271)
+	at com.android.tools.r8.dex.k.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:5)
+	at com.android.tools.r8.dex.k$$Lambda$2772/0x00007f6e558a0af0.get(Unknown Source)
+	at com.android.tools.r8.utils.A3.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:52)
+	at com.android.tools.r8.dex.k.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:778)
+	at com.android.tools.r8.dex.k.b(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:34)
+	at com.android.tools.r8.dex.k$$Lambda$2747/0x00007f6e5589add8.apply(Unknown Source)
+	at com.android.tools.r8.utils.f3.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:4)
+	at com.android.tools.r8.utils.f3$$Lambda$2414/0x00007f6e5579c670.a(Unknown Source)
+	at com.android.tools.r8.utils.f3.a(R8_8.2.47_115170b0e238ab4c8fd3abe4aa31d20c98f8a77f61775e861794cc2d75fbdf13:19)
+	at com.android.tools.r8.utils.f3$$Lambda$2309/0x00007f6e5573f340.call(Unknown Source)
+
+
+BUILD FAILED in 3m 26s
+62 actionable tasks: 62 executed
