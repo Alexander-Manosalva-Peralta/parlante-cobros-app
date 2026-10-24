@@ -1,4 +1,4 @@
-package com.parlantecobros.app.ui.screens
+package com.vexum.punk.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
@@ -29,10 +29,10 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.parlantecobros.app.R
-import com.parlantecobros.app.data.AuthRepository
-import com.parlantecobros.app.data.AuthResult
-import com.parlantecobros.app.data.SessionManager
+import com.vexum.punk.R
+import com.vexum.punk.data.AuthRepository
+import com.vexum.punk.data.AuthResult
+import com.vexum.punk.data.SessionManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -397,6 +397,17 @@ fun LoginScreen(
                 text = "¿No tienes credenciales? Solicítalas a tu administrador",
                 color = Color(0xFF7E8494),
                 fontSize = 11.5.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+
+            Text(
+                text = "Desarrollado por Vexum",
+                color = Color(0xFF6B7280),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,4 +1,4 @@
-package com.parlantecobros.app.ui.screens
+package com.vexum.punk.ui.screens
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
@@ -21,10 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.parlantecobros.app.R
-import com.parlantecobros.app.data.SessionManager
-import com.parlantecobros.app.ui.theme.EmeraldGreen
-import com.parlantecobros.app.ui.theme.ObsidianDark
+import com.vexum.punk.R
+import com.vexum.punk.data.SessionManager
+import com.vexum.punk.ui.theme.EmeraldGreen
+import com.vexum.punk.ui.theme.ObsidianDark
 import kotlinx.coroutines.delay
 
 @Composable
@@ -114,17 +114,30 @@ fun SplashScreen(
             )
         }
 
-        // Pie de página de versión
-        Text(
-            text = "Versión 1.0.8 • Enterprise",
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = Color(0xFF6B7280),
-                fontWeight = FontWeight.Medium
-            ),
+        // Pie de página de versión y autoría Vexum
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
                 .padding(bottom = 24.dp)
-        )
+        ) {
+            Text(
+                text = "Punk Cobros v1.2.3",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = Color(0xFF6B7280),
+                    fontWeight = FontWeight.Medium
+                )
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "Desarrollado por Vexum",
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = Color(0xFF9CA3AF),
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.5.sp
+                )
+            )
+        }
     }
 }

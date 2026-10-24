@@ -1,4 +1,4 @@
-package com.parlantecobros.app.ui.screens
+package com.vexum.punk.ui.screens
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -19,20 +19,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.parlantecobros.app.data.PaymentRepository
-import com.parlantecobros.app.ui.theme.*
+import androidx.compose.foundation.clickable
+import com.vexum.punk.data.HistoryFilter
+import com.vexum.punk.data.PaymentRepository
+import com.vexum.punk.ui.theme.*
 
 @Composable
 fun AnalyticsScreen() {
     val payments by PaymentRepository.payments.collectAsState()
+    val selectedFilter by PaymentRepository.selectedFilter.collectAsState()
 
-    val totalToday = PaymentRepository.totalAmountToday
-    val countToday = PaymentRepository.totalCountToday
-    val averageTicket = PaymentRepository.averageTicket
-    val maxPayment = PaymentRepository.maxPayment
-    val walletShares = PaymentRepository.walletShares
-    val timeSlotStats = PaymentRepository.timeSlotStats
-    val peakHour = PaymentRepository.peakHourSlot
+    val totalAmount = PaymentRepository.getTotalAmount(selectedFilter)
+    val totalCount = PaymentRepository.getTotalCount(selectedFilter)
+    val averageTicket = PaymentRepository.getAverageTicket(selectedFilter)
+    val maxPayment = PaymentRepository.getMaxPayment(selectedFilter)
+    val walletShares = PaymentRepository.getWalletShares(selectedFilter)
+    val timeSlotStats = PaymentRepository.getTimeSlotStats(selectedFilter)
+    val peakHour = timeSlotStats.filter { it.totalAmount > 0 }.maxByOrNull { it.totalAmount }
 
     LazyColumn(
         modifier = Modifier
@@ -43,7 +46,7 @@ fun AnalyticsScreen() {
         verticalArrangement = Arrangement.spacedBy(18.dp),
         contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp)
     ) {
-        // 1. Título de la Sección BI
+        // 1. Título y Selector de Período (Hoy, Semana, Mes)
         item {
             Column(modifier = Modifier.padding(vertical = 4.dp)) {
                 Text(
@@ -61,6 +64,40 @@ fun AnalyticsScreen() {
                         letterSpacing = (-0.5).sp
                     )
                 )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Selector de Rango de Fechas Estilo Apple (Segmented Control)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(LuxurySurface)
+                        .border(1.dp, LuxuryBorder, RoundedCornerShape(14.dp))
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    HistoryFilter.values().forEach { filter ->
+                        val isSelected = filter == selectedFilter
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(if (isSelected) ObsidianDark else Color.Transparent)
+                                .clickable { PaymentRepository.setFilter(filter) }
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = filter.label,
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) Color.White else TextMuted
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -104,7 +141,7 @@ fun AnalyticsScreen() {
                     ) {
                         Column {
                             Text(
-                                text = "Mayor Cobro Hoy",
+                                text = "Mayor Cobro (${selectedFilter.label})",
                                 style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF9CA3AF))
                             )
                             Text(
@@ -122,7 +159,7 @@ fun AnalyticsScreen() {
                                 style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF9CA3AF))
                             )
                             Text(
-                                text = String.format("S/ %.2f (%d)", totalToday, countToday),
+                                text = String.format("S/ %.2f (%d)", totalAmount, totalCount),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -210,7 +247,7 @@ fun AnalyticsScreen() {
                             )
                         )
                         Text(
-                            text = "Hoy",
+                            text = selectedFilter.label,
                             style = MaterialTheme.typography.labelSmall.copy(color = TextMuted)
                         )
                     }
@@ -257,10 +294,13 @@ fun AnalyticsScreen() {
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
-                                    text = slot.label.takeWhile { it != '(' }.trim(),
+                                    text = slot.label,
                                     style = MaterialTheme.typography.labelSmall.copy(
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = if (isPeak) EmeraldGreen else TextMuted
+                                    )
+                                )
                                         color = TextMuted
                                     )
                                 )

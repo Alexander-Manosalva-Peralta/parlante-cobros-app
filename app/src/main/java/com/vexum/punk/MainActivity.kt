@@ -1,4 +1,4 @@
-package com.parlantecobros.app
+package com.vexum.punk
 
 import android.content.ComponentName
 import android.content.Context
@@ -15,15 +15,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.core.app.NotificationManagerCompat
-import com.parlantecobros.app.data.PaymentRepository
-import com.parlantecobros.app.data.SessionManager
-import com.parlantecobros.app.service.CobrosNotificationListener
-import com.parlantecobros.app.service.PunkKeepAliveService
-import com.parlantecobros.app.service.SpeechManager
-import com.parlantecobros.app.ui.screens.HomeScreen
-import com.parlantecobros.app.ui.screens.LoginScreen
-import com.parlantecobros.app.ui.screens.SplashScreen
-import com.parlantecobros.app.ui.theme.ParlanteCobrosTheme
+import com.vexum.punk.data.PaymentRepository
+import com.vexum.punk.data.SessionManager
+import com.vexum.punk.service.CobrosNotificationListener
+import com.vexum.punk.service.PunkKeepAliveService
+import com.vexum.punk.service.SpeechManager
+import com.vexum.punk.ui.screens.HomeScreen
+import com.vexum.punk.ui.screens.LoginScreen
+import com.vexum.punk.ui.screens.SplashScreen
+import com.vexum.punk.ui.theme.ParlanteCobrosTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -138,11 +138,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun forceRebind() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isListenerEnabled) {
-            try {
-                val component = ComponentName(this, CobrosNotificationListener::class.java)
-                NotificationListenerService.requestRebind(component)
-            } catch (_: Exception) {}
+        if (isListenerEnabled) {
+            CobrosNotificationListener.forceRebind(this)
         }
     }
 

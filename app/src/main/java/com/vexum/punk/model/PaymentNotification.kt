@@ -1,4 +1,4 @@
-package com.parlantecobros.app.model
+package com.vexum.punk.model
 
 import java.text.SimpleDateFormat
 import java.util.Date

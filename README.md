@@ -22,7 +22,7 @@ ParlanteCobrosApp/
 ├── app/
 │   ├── src/main/
 │   │   ├── AndroidManifest.xml          # Registro del servicio de escucha y permisos
-│   │   ├── java/com/parlantecobros/app/
+│   │   ├── java/com/vexum/punk/
 │   │   │   ├── MainActivity.kt          # Pantalla principal en Jetpack Compose
 │   │   │   ├── model/
 │   │   │   │   └── PaymentNotification.kt # Modelos de datos y configuración

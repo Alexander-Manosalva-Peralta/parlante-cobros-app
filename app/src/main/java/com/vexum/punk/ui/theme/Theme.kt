@@ -1,4 +1,4 @@
-package com.parlantecobros.app.ui.theme
+package com.vexum.punk.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme

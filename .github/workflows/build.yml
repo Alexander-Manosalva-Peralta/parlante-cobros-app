@@ -42,15 +42,17 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.2.2
-        name: "Punk v1.2.2 - Restauración y Optimización Bancaria de Cobros Yape y Plin"
+        tag_name: v1.2.3
+        name: "Punk v1.2.3 - Identidad Vexum, Historial Persistente y Watchdog 24/7"
         body: |
-          ### Punk v1.2.2 - Detección Concurrente y Filtro Financiero de Alta Precisión
+          ### Punk v1.2.3 - Arquitectura Google Play `com.vexum.punk` & Supervivencia 24/7
 
-          - **Restauración Total de Pagos Yape:** Se reactivó la compatibilidad y captura para todas las notificaciones entrantes de Yape (`com.bcp.innovacxion.yapeapp`). Ahora cada yapeo recibido se detecta, registra inmediatamente en caja e interactúa con el sintetizador de voz.
-          - **Filtro Selectivo Antispam y Antipromociones:** Se corrigió el filtro de marketing para bloquear exclusivamente promociones (como 'Gana 50 soles con Yape Hijos', préstamos, créditos o sorteos) sin afectar las notas de pago de clientes que contengan términos de comercio como compras o recargas.
-          - **Reconocimiento Robusto de Montos y Remitentes:** Soporte para transferencias con o sin céntimos, montos mayores a mil soles con separador de miles, y captura afinada del nombre de cliente o pagador.
-          - **Estética y Ajustes Preservados:** Indicador discreto 'Audio POS Activo', diseño de perfil de comercio sin deformaciones, y persistencia de interruptores de volumen y sonido.
+          - **Identidad Oficial Google Play:** Paquete actualizado oficialmente a `com.vexum.punk` con autoría e identidad corporativa de Vexum.
+          - **Supervivencia y Watchdog 24/7:** Servicio con reconexión indestructible contra el modo reposo/Doze de Android, receptor de reinicio del dispositivo (`BOOT_COMPLETED`, `USER_PRESENT`, `SCREEN_ON`) y ciclo de vigilancia cada 10 minutos para que nunca se apague tras horas o días de uso.
+          - **Historial Persistente con Auto-Limpieza (30 días):** Los cobros ahora se almacenan de forma segura en la memoria interna local del teléfono. Se eliminó el botón accidental de 'Limpiar' y se implementó una purga automática a los 30 días para no consumir almacenamiento.
+          - **Filtros por Período y Agrupación por Fecha:** Vistas segmentadas de 'Hoy', 'Esta Semana' y 'Este Mes' en caja y analítica, con agrupación visual estilo Apple (Hoy, Ayer, fecha).
+          - **Analítica de Franjas Simplificada:** Clasificación en 3 turnos: 'Día', 'Tarde' y 'Noche' (con horarios delimitados en código sin recargar la interfaz).
+          - **Ajustes Rediseñados Estilo Apple:** Secciones agrupadas Inset Grouped, controles unificados y pie de página ejecutivo 'Desarrollado por Vexum'.
 
           **Para instalar en tu celular Android:**
           1. Descarga el archivo `app-debug.apk`.

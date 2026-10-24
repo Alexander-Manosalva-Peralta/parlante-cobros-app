@@ -1,4 +1,4 @@
-package com.parlantecobros.app.service
+package com.vexum.punk.service
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -10,9 +10,9 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.util.Log
-import com.parlantecobros.app.model.AppSettings
-import com.parlantecobros.app.model.PaymentItem
-import com.parlantecobros.app.model.SpeechTemplate
+import com.vexum.punk.model.AppSettings
+import com.vexum.punk.model.PaymentItem
+import com.vexum.punk.model.SpeechTemplate
 import java.util.Locale
 
 class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener {
@@ -91,7 +91,7 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
         isInitialized = true
 
         synchronized(pendingMessages) {
-            val currentVol = com.parlantecobros.app.data.PaymentRepository.settings.value.speechVolume
+            val currentVol = com.vexum.punk.data.PaymentRepository.settings.value.speechVolume
             pendingMessages.forEach { speakRaw(it, currentVol) }
             pendingMessages.clear()
         }
@@ -191,7 +191,7 @@ class SpeechManager(private val context: Context) : TextToSpeech.OnInitListener 
 
     fun testVoice(sampleText: String = "") {
         acquireWakeLock()
-        val settings = com.parlantecobros.app.data.PaymentRepository.settings.value
+        val settings = com.vexum.punk.data.PaymentRepository.settings.value
 
         // Respetar interruptor de campanilla (Chime)
         if (settings.chimeBeforeSpeaking) {

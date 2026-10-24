@@ -1,4 +1,4 @@
-package com.parlantecobros.app.ui.screens
+package com.vexum.punk.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
@@ -25,12 +25,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.parlantecobros.app.R
-import com.parlantecobros.app.data.PaymentRepository
-import com.parlantecobros.app.data.SessionManager
-import com.parlantecobros.app.model.AppSource
-import com.parlantecobros.app.model.PaymentItem
-import com.parlantecobros.app.ui.theme.*
+import com.vexum.punk.R
+import androidx.compose.foundation.BorderStroke
+import com.vexum.punk.data.HistoryFilter
+import com.vexum.punk.data.PaymentRepository
+import com.vexum.punk.data.SessionManager
+import com.vexum.punk.model.AppSource
+import com.vexum.punk.model.PaymentItem
+import com.vexum.punk.ui.theme.*
 import java.util.Calendar
 
 enum class BottomTab(val label: String) {
@@ -184,15 +186,17 @@ fun DockItem(
 fun CashierContent(
     greeting: String,
     payments: List<PaymentItem>,
-    settings: com.parlantecobros.app.model.AppSettings,
+    settings: com.vexum.punk.model.AppSettings,
     isNotificationPermissionGranted: Boolean,
     isBatteryOptimizationIgnored: Boolean = true,
     onRequestPermission: () -> Unit,
     onRequestIgnoreBatteryOptimization: () -> Unit = {},
     onTestVoice: (String) -> Unit
 ) {
-    val totalToday = payments.sumOf { it.amount }
-    val countToday = payments.size
+    val selectedFilter by PaymentRepository.selectedFilter.collectAsState()
+    val filteredPayments = PaymentRepository.getPayments(selectedFilter)
+    val totalAmount = PaymentRepository.getTotalAmount(selectedFilter)
+    val count = PaymentRepository.getTotalCount(selectedFilter)
     var isAmountVisible by remember { mutableStateOf(true) }
 
     LazyColumn(
@@ -389,7 +393,7 @@ fun CashierContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "TOTAL RECAUDADO HOY",
+                            text = "TOTAL COBRADO (${selectedFilter.label.uppercase()})",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF9CA3AF),
@@ -411,7 +415,7 @@ fun CashierContent(
                     }
 
                     Text(
-                        text = if (isAmountVisible) String.format("S/ %.2f", totalToday) else "S/ ••••••",
+                        text = if (isAmountVisible) String.format("S/ %.2f", totalAmount) else "S/ ••••••",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -431,7 +435,7 @@ fun CashierContent(
                                 .padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = "$countToday cobros hoy",
+                                text = "$count cobros",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     color = Color(0xFFD1D5DB),
                                     fontWeight = FontWeight.Medium
@@ -439,8 +443,8 @@ fun CashierContent(
                             )
                         }
 
-                        if (countToday > 0) {
-                            val avg = totalToday / countToday
+                        if (count > 0) {
+                            val avg = totalAmount / count
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(12.dp))
@@ -448,10 +452,10 @@ fun CashierContent(
                                     .padding(horizontal = 10.dp, vertical = 6.dp)
                             ) {
                                 Text(
-                                    text = String.format("Ticket prom. S/ %.2f", avg),
+                                    text = String.format("Prom. S/ %.2f", avg),
                                     style = MaterialTheme.typography.labelSmall.copy(
-                                        color = Color(0xFFD1D5DB),
-                                        fontWeight = FontWeight.Medium
+                                        color = EmeraldGreen,
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 )
                             }
@@ -561,35 +565,60 @@ fun CashierContent(
             }
         }
 
-        // 5. Historial de Transacciones
+        // 5. Historial de Transacciones con Filtro por Fechas
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Cobros de Hoy",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = TextMain
-                    )
-                )
-
-                if (payments.isNotEmpty()) {
-                    TextButton(onClick = { PaymentRepository.clearHistory() }) {
-                        Text(
-                            text = "Limpiar",
-                            style = MaterialTheme.typography.labelMedium.copy(color = TextMuted)
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Historial de Cobros",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = TextMain
                         )
+                    )
+                }
+
+                // Selector de Período Estilo Apple (Hoy | Esta Semana | Este Mes)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(LuxurySurface)
+                        .border(1.dp, LuxuryBorder, RoundedCornerShape(14.dp))
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    HistoryFilter.values().forEach { filter ->
+                        val isSelected = filter == selectedFilter
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(if (isSelected) ObsidianDark else Color.Transparent)
+                                .clickable { PaymentRepository.setFilter(filter) }
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = filter.label,
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) Color.White else TextMuted
+                                )
+                            )
+                        }
                     }
                 }
             }
         }
 
-        if (payments.isEmpty()) {
+        if (filteredPayments.isEmpty()) {
             item {
                 Card(
                     modifier = Modifier
@@ -620,14 +649,14 @@ fun CashierContent(
                             )
                         }
                         Text(
-                            text = "A la espera de cobros",
+                            text = "Sin cobros en este período",
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextMain
                             )
                         )
                         Text(
-                            text = "Cuando te yapeen o transfieran, Punk anunciará el monto por altavoz y se registrará aquí.",
+                            text = "Cuando te yapeen o transfieran, Punk anunciará el monto por altavoz y se guardará automáticamente.",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = TextMuted,
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -637,8 +666,27 @@ fun CashierContent(
                 }
             }
         } else {
-            items(payments, key = { it.id }) { item ->
-                LuxuryTransactionCard(payment = item)
+            // Agrupación de cobros por fecha (Hoy, Ayer o Fecha)
+            val groupedPayments = filteredPayments.groupBy { item ->
+                formatDateGroup(item.timestamp)
+            }
+
+            groupedPayments.forEach { (dateHeader, itemsInDate) ->
+                item {
+                    Text(
+                        text = dateHeader,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = TextMuted,
+                            letterSpacing = 0.5.sp
+                        ),
+                        modifier = Modifier.padding(top = 10.dp, bottom = 4.dp)
+                    )
+                }
+
+                items(itemsInDate, key = { it.id }) { item ->
+                    LuxuryTransactionCard(payment = item)
+                }
             }
         }
     }
@@ -646,7 +694,7 @@ fun CashierContent(
 
 @Composable
 fun SettingsContent(
-    settings: com.parlantecobros.app.model.AppSettings,
+    settings: com.vexum.punk.model.AppSettings,
     onOpenAppSettings: () -> Unit,
     onRebindService: () -> Unit,
     onTestVoice: (String) -> Unit,
@@ -660,126 +708,94 @@ fun SettingsContent(
             .fillMaxSize()
             .statusBarsPadding()
             .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp)
     ) {
         item {
             Column(modifier = Modifier.padding(vertical = 4.dp)) {
                 Text(
-                    text = "Configuración",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = TextMuted)
-                )
-                Text(
-                    text = "Ajustes de Punk",
+                    text = "Ajustes",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        color = TextMain
+                        color = TextMain,
+                        letterSpacing = (-0.5).sp
                     )
+                )
+                Text(
+                    text = "Control de voz, sistema y comercio",
+                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                 )
             }
         }
 
-        // Tarjeta de Perfil del Comercio
+        // 1. CUENTA Y COMERCIO (Estilo Inset Grouped de Apple)
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "CUENTA Y COMERCIO",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = TextMuted,
+                        letterSpacing = 1.sp
+                    )
+                )
+
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = LuxurySurface,
+                    border = BorderStroke(1.dp, LuxuryBorder)
                 ) {
-                    // Cabecera: Icono Comercio + Nombre del Negocio en su propio renglón amplio
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(46.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(Color(0xFFF3F4F6))
-                                .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(14.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Storefront,
-                                contentDescription = null,
-                                tint = TextMain,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "COMERCIO AUTORIZADO",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    color = TextMuted,
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 1.2.sp,
-                                    fontSize = 10.sp
-                                )
-                            )
-                            Text(
-                                text = session.merchantName.ifEmpty { "Mi Negocio" },
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextMain
-                                ),
-                                maxLines = 2
-                            )
-                        }
-                    }
-
-                    Divider(color = LuxuryBorder, thickness = 0.8.dp)
-
-                    // Pie de Perfil: Correo electrónico con icono + Botón Salir
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.weight(1f, fill = false)
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Email,
-                                contentDescription = null,
-                                tint = TextMuted,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = session.userEmail.ifEmpty { "comercio@punk.com" },
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    color = TextMain
-                                ),
-                                maxLines = 1
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clip(CircleShape)
+                                    .background(ObsidianDark),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Storefront,
+                                    contentDescription = null,
+                                    tint = EmeraldGreen,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Column {
+                                Text(
+                                    text = session.merchantName.ifEmpty { "Comercio Autorizado" },
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = TextMain
+                                    )
+                                )
+                                Text(
+                                    text = session.userEmail.ifEmpty { "comercio@punk.com" },
+                                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                                )
+                            }
                         }
 
-                        OutlinedButton(
+                        TextButton(
                             onClick = onLogout,
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFDC2626)),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFEE2E2)),
-                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Logout,
-                                contentDescription = "Cerrar Sesión",
-                                modifier = Modifier.size(15.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "Salir",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFFEF4444)
+                                )
                             )
                         }
                     }
@@ -787,218 +803,387 @@ fun SettingsContent(
             }
         }
 
-        // Tarjeta de Opciones de Voz
+        // 2. PREFERENCIAS DE AUDIO (Agrupadas sin múltiples tarjetas)
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Preferencias de Voz",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = TextMain
-                        )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "PREFERENCIAS DE AUDIO",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = TextMuted,
+                        letterSpacing = 1.sp
                     )
+                )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Mencionar nombre de quien paga",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = TextMain
-                                )
-                            )
-                            Text(
-                                text = "Ej: '...de Carlos Mendoza'",
-                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
-                            )
-                        }
-                        Switch(
-                            checked = settings.mentionCustomerName,
-                            onCheckedChange = { checked ->
-                                PaymentRepository.updateSettings { it.copy(mentionCustomerName = checked) }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = EmeraldGreen
-                            )
-                        )
-                    }
-
-                    Divider(color = LuxuryBorder, thickness = 0.8.dp)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Campanilla previa (Chime)",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = TextMain
-                                )
-                            )
-                            Text(
-                                text = "Tono suave antes del anuncio",
-                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
-                            )
-                        }
-                        Switch(
-                            checked = settings.chimeBeforeSpeaking,
-                            onCheckedChange = { checked ->
-                                PaymentRepository.updateSettings { it.copy(chimeBeforeSpeaking = checked) }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = EmeraldGreen
-                            )
-                        )
-                    }
-
-                    Divider(color = LuxuryBorder, thickness = 0.8.dp)
-
-                    // Control de Volumen de Voz
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = LuxurySurface,
+                    border = BorderStroke(1.dp, LuxuryBorder)
+                ) {
+                    Column {
+                        // Fila: Mencionar nombre
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 14.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "Volumen de Alerta",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = TextMain
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Mencionar nombre de quien paga",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextMain
+                                    )
                                 )
-                            )
-                            Text(
-                                text = "${(settings.speechVolume * 100).toInt()}%",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = EmeraldGreen
+                                Text(
+                                    text = "Ej: '...de Juan Pérez'",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                                )
+                            }
+                            Switch(
+                                checked = settings.mentionCustomerName,
+                                onCheckedChange = { checked ->
+                                    PaymentRepository.updateSettings { it.copy(mentionCustomerName = checked) }
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = EmeraldGreen
                                 )
                             )
                         }
-                        Slider(
-                            value = settings.speechVolume,
-                            onValueChange = { vol ->
-                                PaymentRepository.updateSettings { it.copy(speechVolume = vol) }
-                            },
-                            valueRange = 0.1f..1.0f,
-                            colors = SliderDefaults.colors(
-                                thumbColor = EmeraldGreen,
-                                activeTrackColor = EmeraldGreen,
-                                inactiveTrackColor = LuxuryBorder
+
+                        Divider(color = LuxuryBorder, thickness = 0.6.dp)
+
+                        // Fila: Campanilla
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Campanilla previa (Chime)",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextMain
+                                    )
+                                )
+                                Text(
+                                    text = "Tono suave antes del anuncio",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                                )
+                            }
+                            Switch(
+                                checked = settings.chimeBeforeSpeaking,
+                                onCheckedChange = { checked ->
+                                    PaymentRepository.updateSettings { it.copy(chimeBeforeSpeaking = checked) }
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = EmeraldGreen
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    OutlinedButton(
-                        onClick = { onTestVoice("") },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Icon(imageVector = Icons.Outlined.VolumeUp, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Probar Voz de Alerta", fontWeight = FontWeight.SemiBold)
+                        Divider(color = LuxuryBorder, thickness = 0.6.dp)
+
+                        // Fila: Slider de Volumen
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 14.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Volumen de Voz",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextMain
+                                    )
+                                )
+                                Text(
+                                    text = "${(settings.speechVolume * 100).toInt()}%",
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = EmeraldGreen
+                                    )
+                                )
+                            }
+                            Slider(
+                                value = settings.speechVolume,
+                                onValueChange = { vol ->
+                                    PaymentRepository.updateSettings { it.copy(speechVolume = vol) }
+                                },
+                                valueRange = 0.1f..1.0f,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = EmeraldGreen,
+                                    activeTrackColor = EmeraldGreen,
+                                    inactiveTrackColor = LuxuryBorder
+                                )
+                            )
+                        }
+
+                        Divider(color = LuxuryBorder, thickness = 0.6.dp)
+
+                        // Fila de Acción: Probar Altavoz
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onTestVoice("") }
+                                .padding(horizontal = 18.dp, vertical = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.VolumeUp,
+                                    contentDescription = null,
+                                    tint = EmeraldGreen,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = "Probar Altavoz de Cobro",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextMain
+                                    )
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Outlined.ChevronRight,
+                                contentDescription = null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
             }
         }
 
-        // Sistema & Segundo Plano
+        // 3. SISTEMA Y SEGUNDO PLANO 24/7
         item {
-            Card(
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "SISTEMA Y SEGUNDO PLANO",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = TextMuted,
+                        letterSpacing = 1.sp
+                    )
+                )
+
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = LuxurySurface,
+                    border = BorderStroke(1.dp, LuxuryBorder)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onRebindService() }
+                                .padding(horizontal = 18.dp, vertical = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Sync,
+                                    contentDescription = null,
+                                    tint = TextMain,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Column {
+                                    Text(
+                                        text = "Reconectar Servicio del Sistema",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextMain
+                                        )
+                                    )
+                                    Text(
+                                        text = "Mantiene la vinculación activa 24/7",
+                                        style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                                    )
+                                }
+                            }
+                            Icon(
+                                imageVector = Icons.Outlined.ChevronRight,
+                                contentDescription = null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
+                        Divider(color = LuxuryBorder, thickness = 0.6.dp)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onOpenAppSettings() }
+                                .padding(horizontal = 18.dp, vertical = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.BatteryChargingFull,
+                                    contentDescription = null,
+                                    tint = TextMain,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Column {
+                                    Text(
+                                        text = "Ajustes de Batería y Arranque",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextMain
+                                        )
+                                    )
+                                    Text(
+                                        text = "Quitar restricciones de segundo plano",
+                                        style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                                    )
+                                }
+                            }
+                            Icon(
+                                imageVector = Icons.Outlined.ChevronRight,
+                                contentDescription = null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. LEGAL Y PRIVACIDAD
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "LEGAL Y PRIVACIDAD",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = TextMuted,
+                        letterSpacing = 1.sp
+                    )
+                )
+
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = LuxurySurface,
+                    border = BorderStroke(1.dp, LuxuryBorder)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    uriHandler.openUri("https://punk-admin-dashboard-qgmq.vercel.app/privacidad")
+                                }
+                                .padding(horizontal = 18.dp, vertical = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Policy,
+                                    contentDescription = null,
+                                    tint = TextMain,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = "Políticas de Privacidad",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextMain
+                                    )
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Outlined.OpenInNew,
+                                contentDescription = null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
+                        Divider(color = LuxuryBorder, thickness = 0.6.dp)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.VerifiedUser,
+                                contentDescription = null,
+                                tint = EmeraldGreen,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = "Lectura 100% local en tu teléfono. Sin acceso a chats personales ni claves bancarias.",
+                                style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. AUTORÍA Y MARCA VEXUM
+        item {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                shape = RoundedCornerShape(24.dp)
+                    .padding(vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    Text(
-                        text = "Sistema y Batería",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = TextMain
-                        )
+                Text(
+                    text = "Punk Cobros • Versión 1.2.3",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color(0xFF6B7280),
+                        fontWeight = FontWeight.Medium
                     )
-
-                    OutlinedButton(
-                        onClick = onRebindService,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Text("Reconectar Servicio del Sistema", fontWeight = FontWeight.SemiBold)
-                    }
-
-                    OutlinedButton(
-                        onClick = onOpenAppSettings,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Text("Ajustes del Teléfono (Inicio Automático)", fontWeight = FontWeight.SemiBold)
-                    }
-                }
+                )
+                Spacer(modifier = Modifier.height(3.dp))
+                Text(
+                    text = "Desarrollado por Vexum",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color(0xFF9CA3AF),
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
+                    )
+                )
             }
         }
-
-        // Políticas de Privacidad y Cumplimiento Google Play
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, LuxuryBorder, RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(containerColor = LuxurySurface),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        text = "Legal y Privacidad",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = TextMain
-                        )
-                    )
-                    Text(
-                        text = "Punk solo lee notificaciones bancarias y billeteras autorizadas en tiempo real para anunciarlas por voz. No lee chats personales ni almacena números de cuenta o tarjetas.",
-                        style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
-                    )
-                    OutlinedButton(
-                        onClick = {
-                            uriHandler.openUri("https://punk-admin-dashboard-qgmq.vercel.app/privacidad")
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Icon(imageVector = Icons.Outlined.Policy, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Ver Políticas de Privacidad", fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            }
-        }
+    }
+}
     }
 }
 
@@ -1068,4 +1253,21 @@ fun LuxuryTransactionCard(payment: PaymentItem) {
         }
     }
 }
+
+fun formatDateGroup(timestamp: Long): String {
+    val itemCal = Calendar.getInstance().apply { timeInMillis = timestamp }
+    val now = Calendar.getInstance()
+    val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
+
+    return when {
+        itemCal.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
+        itemCal.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR) -> "Hoy"
+
+        itemCal.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) &&
+        itemCal.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR) -> "Ayer"
+
+        else -> java.text.SimpleDateFormat("d 'de' MMMM", java.util.Locale("es", "PE")).format(java.util.Date(timestamp))
+    }
+}
+
 

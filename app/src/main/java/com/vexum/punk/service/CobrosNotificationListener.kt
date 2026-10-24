@@ -1,4 +1,4 @@
-package com.parlantecobros.app.service
+package com.vexum.punk.service
 
 import android.app.Notification
 import android.content.ComponentName
@@ -7,7 +7,7 @@ import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import com.parlantecobros.app.data.PaymentRepository
+import com.vexum.punk.data.PaymentRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -76,6 +76,7 @@ class CobrosNotificationListener : NotificationListenerService() {
 
     override fun onListenerConnected() {
         super.onListenerConnected()
+        isConnected = true
         PunkKeepAliveService.start(applicationContext)
         val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
         PaymentRepository.recordRawNotification("[$time] Conectado exitosamente. Filtro financiero activo.")
@@ -84,16 +85,11 @@ class CobrosNotificationListener : NotificationListenerService() {
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
+        isConnected = false
         val time = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
         PaymentRepository.recordRawNotification("[$time] Reconectando servicio...")
         Log.w(TAG, "onListenerDisconnected detectado, solicitando reconexión inmediata a Android...")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            try {
-                requestRebind(ComponentName(this, CobrosNotificationListener::class.java))
-            } catch (e: Exception) {
-                Log.e(TAG, "Error en requestRebind", e)
-            }
-        }
+        forceRebind(this)
     }
 
     override fun onDestroy() {
@@ -198,5 +194,37 @@ class CobrosNotificationListener : NotificationListenerService() {
 
     companion object {
         private const val TAG = "CobrosNotificationListener"
+        var isConnected: Boolean = false
+            private set
+
+        fun forceRebind(context: Context) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val component = ComponentName(context, CobrosNotificationListener::class.java)
+                    requestRebind(component)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "requestRebind no soportado o con error: ${e.message}")
+            }
+
+            // Truco estándar de Android para forzar al NotificationManagerService a re-evaluar y re-vincular
+            try {
+                val pm = context.packageManager
+                val component = ComponentName(context, CobrosNotificationListener::class.java)
+                pm.setComponentEnabledSetting(
+                    component,
+                    android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    android.content.pm.PackageManager.DONT_KILL_APP
+                )
+                pm.setComponentEnabledSetting(
+                    component,
+                    android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    android.content.pm.PackageManager.DONT_KILL_APP
+                )
+                Log.d(TAG, "Componente de notificación re-activado y vinculado con éxito.")
+            } catch (e: Exception) {
+                Log.w(TAG, "Error alternando componente de notificación: ${e.message}")
+            }
+        }
     }
 }

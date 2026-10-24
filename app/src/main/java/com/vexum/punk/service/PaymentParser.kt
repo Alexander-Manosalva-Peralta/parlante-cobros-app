@@ -1,7 +1,7 @@
-package com.parlantecobros.app.service
+package com.vexum.punk.service
 
-import com.parlantecobros.app.model.AppSource
-import com.parlantecobros.app.model.PaymentItem
+import com.vexum.punk.model.AppSource
+import com.vexum.punk.model.PaymentItem
 import java.util.regex.Pattern
 
 object PaymentParser {

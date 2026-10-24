@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.parlantecobros.app"
+    namespace = "com.vexum.punk"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.parlantecobros.app"
+        applicationId = "com.vexum.punk"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.2.2"
+        versionCode = 5
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
