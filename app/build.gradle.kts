@@ -31,6 +31,13 @@ android {
         }
     }
 
+    // Aumentar memoria heap para el compilador DEX (necesario para bundleRelease con material-icons-extended)
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
