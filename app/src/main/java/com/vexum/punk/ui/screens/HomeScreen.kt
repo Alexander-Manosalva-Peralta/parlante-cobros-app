@@ -1184,8 +1184,6 @@ fun SettingsContent(
         }
     }
 }
-    }
-}
 
 @Composable
 fun LuxuryTransactionCard(payment: PaymentItem) {

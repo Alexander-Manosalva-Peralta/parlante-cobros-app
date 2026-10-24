@@ -301,9 +301,6 @@ fun AnalyticsScreen() {
                                         color = if (isPeak) EmeraldGreen else TextMuted
                                     )
                                 )
-                                        color = TextMuted
-                                    )
-                                )
                             }
                         }
                     }
