@@ -201,7 +201,7 @@ class CobrosNotificationListener : NotificationListenerService() {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     val component = ComponentName(context, CobrosNotificationListener::class.java)
-                    requestRebind(component)
+                    NotificationListenerService.requestRebind(component)
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "requestRebind no soportado o con error: ${e.message}")

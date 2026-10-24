@@ -962,7 +962,7 @@ fun SettingsContent(
                                 )
                             }
                             Icon(
-                                imageVector = Icons.Outlined.ChevronRight,
+                                imageVector = Icons.Outlined.ArrowForward,
                                 contentDescription = null,
                                 tint = TextMuted,
                                 modifier = Modifier.size(18.dp)
@@ -1004,7 +1004,7 @@ fun SettingsContent(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Sync,
+                                    imageVector = Icons.Outlined.Refresh,
                                     contentDescription = null,
                                     tint = TextMain,
                                     modifier = Modifier.size(20.dp)
@@ -1024,7 +1024,7 @@ fun SettingsContent(
                                 }
                             }
                             Icon(
-                                imageVector = Icons.Outlined.ChevronRight,
+                                imageVector = Icons.Outlined.ArrowForward,
                                 contentDescription = null,
                                 tint = TextMuted,
                                 modifier = Modifier.size(18.dp)
@@ -1046,7 +1046,7 @@ fun SettingsContent(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Outlined.BatteryChargingFull,
+                                    imageVector = Icons.Outlined.Settings,
                                     contentDescription = null,
                                     tint = TextMain,
                                     modifier = Modifier.size(20.dp)
@@ -1066,7 +1066,7 @@ fun SettingsContent(
                                 }
                             }
                             Icon(
-                                imageVector = Icons.Outlined.ChevronRight,
+                                imageVector = Icons.Outlined.ArrowForward,
                                 contentDescription = null,
                                 tint = TextMuted,
                                 modifier = Modifier.size(18.dp)
@@ -1110,7 +1110,7 @@ fun SettingsContent(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Policy,
+                                    imageVector = Icons.Outlined.Lock,
                                     contentDescription = null,
                                     tint = TextMain,
                                     modifier = Modifier.size(20.dp)
@@ -1124,7 +1124,7 @@ fun SettingsContent(
                                 )
                             }
                             Icon(
-                                imageVector = Icons.Outlined.OpenInNew,
+                                imageVector = Icons.Outlined.ArrowForward,
                                 contentDescription = null,
                                 tint = TextMuted,
                                 modifier = Modifier.size(18.dp)
@@ -1141,7 +1141,7 @@ fun SettingsContent(
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.VerifiedUser,
+                                imageVector = Icons.Outlined.Security,
                                 contentDescription = null,
                                 tint = EmeraldGreen,
                                 modifier = Modifier.size(20.dp)
