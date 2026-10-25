@@ -20,6 +20,15 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("punk-upload-key.jks")
+            storePassword = "PunkVexum2026Rel"
+            keyAlias = "vexum-punk"
+            keyPassword = "PunkVexum2026Rel"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,7 +36,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug") // Debug signing for easy direct install
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
