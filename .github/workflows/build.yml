@@ -73,8 +73,8 @@ jobs:
     - name: Publicar Release para descarga directa en Celular
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v1.2.3
-        name: "Punk v1.2.3 - Identidad Vexum, Historial Persistente y Watchdog 24/7"
+        tag_name: v1.2.4
+        name: "Punk v1.2.4 - Release Signing para Google Play Store"
         body: |
           ### Punk v1.2.3 - Arquitectura Google Play `com.vexum.punk` & Supervivencia 24/7
 
