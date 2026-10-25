@@ -5,13 +5,13 @@ plugins {
 
 android {
     namespace = "com.vexum.punk"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.vexum.punk"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 6
+        targetSdk = 36
+        versionCode = 7
         versionName = "1.2.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

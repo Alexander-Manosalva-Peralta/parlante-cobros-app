@@ -25,6 +25,11 @@ jobs:
     - name: Configurar Gradle
       uses: gradle/actions/setup-gradle@v3
 
+    - name: Configurar Android SDK 36
+      run: |
+        yes | sdkmanager --licenses || true
+        sdkmanager "platforms;android-36" || true
+
     - name: Generar Wrapper
       run: |
         gradle wrapper --gradle-version 8.2
